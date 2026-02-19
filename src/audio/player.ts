@@ -10,7 +10,7 @@ export function loadTrack(src: string) {
 
   audio.ontimeupdate = () => {
     store.currentTime = audio!.currentTime
-    console.log("time:", store.currentTime)
+    renderCurrentTime()
   }
 
   audio.play()
@@ -23,3 +23,5 @@ export function play() {
 export function pause() {
   audio?.pause()
 }
+
+import { renderCurrentTime } from "../ui/timeline"
