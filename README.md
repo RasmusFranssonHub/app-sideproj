@@ -58,22 +58,6 @@ npm run format
 npm run format:check
 ```
 
-## Project Structure
-
-```
-app-sideproj/
-├── public/          # Static assets
-├── src/
-│   ├── counter.ts   # Counter component
-│   ├── main.ts      # Application entry point
-│   ├── style.scss   # Global styles (SCSS)
-│   └── typescript.svg
-├── index.html       # HTML entry point
-├── package.json     # Dependencies and scripts
-├── tsconfig.json    # TypeScript configuration
-├── .prettierrc      # Prettier configuration
-└── .gitignore       # Git ignore rules
-```
 
 ## Features
 
