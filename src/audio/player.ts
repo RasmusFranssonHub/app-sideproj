@@ -1,4 +1,6 @@
 import { store } from "../state/store"
+import { renderCurrentTime } from "../ui/timeline"
+
 
 let audio: HTMLAudioElement | null = null
 
@@ -7,6 +9,10 @@ export function loadTrack(src: string) {
 
   audio = new Audio(src)
   store.audio = audio
+
+  audio.onloadedmetadata = () => {
+  store.duration = audio!.duration
+}
 
   audio.ontimeupdate = () => {
     store.currentTime = audio!.currentTime
@@ -24,4 +30,3 @@ export function pause() {
   audio?.pause()
 }
 
-import { renderCurrentTime } from "../ui/timeline"
