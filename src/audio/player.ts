@@ -15,3 +15,11 @@ export function loadTrack(src: string) {
   audio.play()
 }
 
+export function play() {
+  store.audio?.play()
+}
+
+export function pause() {
+  store.audio?.pause()
+}
+
