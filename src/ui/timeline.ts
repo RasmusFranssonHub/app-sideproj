@@ -1,4 +1,5 @@
 import { store } from "../state/store"
+import { drawPlayhead } from "../audio/playhead"
 
 const timeEl = document.getElementById("current-time")
 
@@ -18,3 +19,22 @@ export function renderCurrentTime() {
 
   timeEl.textContent = `${current} / ${duration}`
 }
+
+const playheadCanvas =
+  document.getElementById("playhead") as HTMLCanvasElement
+
+function tick() {
+  if (store.audio && !store.audio.paused) {
+    store.currentTime = store.audio.currentTime
+  }
+
+  renderCurrentTime()
+
+  if (playheadCanvas) {
+    drawPlayhead(playheadCanvas)
+  }
+
+  requestAnimationFrame(tick)
+}
+
+tick()

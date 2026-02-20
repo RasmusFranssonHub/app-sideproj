@@ -1,0 +1,17 @@
+// Layered styles for the waveform and playhead canvases
+#timeline {
+  position: relative;
+  width: 800px;
+  height: 200px;
+}
+
+#waveform,
+#playhead {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#playhead {
+  pointer-events: none;
+}

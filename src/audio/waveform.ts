@@ -6,7 +6,6 @@ export async function drawWaveform(
   if (!ctx) return
 
   const arrayBuffer = await file.arrayBuffer()
-
   const audioContext = new AudioContext()
   const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
 

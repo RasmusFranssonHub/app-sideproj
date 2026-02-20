@@ -22,5 +22,10 @@ export function bindUpload() {
     if (canvas) {
       drawWaveform(file, canvas)
     }
+
+    const waveformCanvas =
+      document.getElementById("waveform") as HTMLCanvasElement
+
+  drawWaveform(file, waveformCanvas)
   })
 }
