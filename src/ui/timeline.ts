@@ -12,10 +12,10 @@ function formatTime(seconds: number) {
 export function renderCurrentTime() {
   if (!timeEl) return
 
-    const current = formatTime(store.currentTime)
-    const duration = store.duration
-        ? formatTime(store.duration)
-        : "--:--"
+  const current = formatTime(store.currentTime)
+  const duration = store.duration
+    ? formatTime(store.duration)
+    : "--:--"
 
   timeEl.textContent = `${current} / ${duration}`
 }
@@ -38,3 +38,21 @@ function tick() {
 }
 
 tick()
+
+export function bindWaveformSeek() {
+  const canvas = document.getElementById("waveform") as HTMLCanvasElement
+  if (!canvas) return
+
+  canvas.addEventListener("click", (e) => {
+    if (!store.audio || !store.duration) return
+
+    const rect = canvas.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const progress = x / rect.width
+
+    const seekTime = progress * store.duration
+
+    store.audio.currentTime = seekTime
+    store.currentTime = seekTime
+  })
+}
