@@ -8,18 +8,19 @@
   </head>
   <body>
     <header>
+    <div class="nav-bar-head">
       <h1>SoundRev.</h1> 
-      <p>SoundRev is a music review web application built with React and Vite. It allows you to upload and review music projects.</p>
+      <nav class="header-nav">
+        <ul>
+          <li><a href="/uploads">Uploads</a></li>
+          <li><a href="/in-progress">In progress</a></li>
+          <li><a href="/review">Review</a></li>
+          <li><a href="/completed">Completed</a></li>
+        </ul>
+      </nav>
+    </div>
+      <p>Review. Refine. Release.</p>
     </header>
-
-    <nav>
-      <ul>
-        <li><a href="/uploads">Uploads</a></li>
-        <li><a href="/in-progress">In progress</a></li>
-        <li><a href="/review">Review</a></li>
-        <li><a href="/completed">Completed</a></li>
-      </ul>
-    </nav>
 
     <main>
       <!-- The main content of the application will be rendered here by React. -->
@@ -31,18 +32,23 @@
 
       <!------------------------- CANVAS ------------------------->
       <div id="timeline">
-        <canvas id="waveform" width="800" height="100"></canvas>
-        <canvas id="playhead" width="800" height="100"></canvas>
-      </div>
+          <canvas id="waveform" width="800" height="100"></canvas>
+          <canvas id="playhead" width="800" height="100"></canvas>
+        </div>
 
-      <!----------------------- MEDIAPLAYER -------------------------->
-      <!---- This is a placeholder for the media player component. ---->
-      <button id="play">Play</button>
-      <button id="pause">Pause</button>
-      <p>
+        <div class="play-pause-controls">
         <!-- This is a placeholder for the media player controls and display. -->
-         Time: <span id="current-time">0:00</span>
-      </p>
+        <p>
+          Time: <span id="current-time">0:00</span>
+        </p>
+
+        <!----------------------- MEDIAPLAYER -------------------------->
+        <!---- This is a placeholder for the media player component. ---->
+        <div class="play-pause"></div>
+          <button id="pause">Pause</button>
+          <button id="play">Play</button>
+        </div>
+      </div>
     </main>
 
     <footer>

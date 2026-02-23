@@ -2,8 +2,8 @@ import "./styles/main.scss"
 
 import { bindUpload } from "./tracks/upload"
 import { bindPlayerControls } from "./ui/events"
-import { bindWaveformSeek } from "./ui/timeline"
+import { bindPlayheadDrag } from "./ui/timeline"
 
 bindUpload()
 bindPlayerControls()
-bindWaveformSeek()
+bindPlayheadDrag()
