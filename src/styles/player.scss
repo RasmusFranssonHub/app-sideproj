@@ -1,0 +1,11 @@
+.hidden {
+  display: none;
+}
+
+.player-style {
+  display: flex;
+  flex-direction: column;
+  place-items: center;
+  gap: 1em;
+  margin-top: 2em;
+}

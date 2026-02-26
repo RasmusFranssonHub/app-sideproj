@@ -3,17 +3,13 @@
 @use "../styles/header.scss";
 @use "../styles/body.scss";
 @use "../styles/footer.scss";
+@use "../styles/player.scss";
+@use "../styles/nav.scss";
 
 // Global styles and variables for functions
 #playhead {
   pointer-events: none;
 }
-
-// Variables
-$primary-color: #646cff;
-$primary-color-hover: #535bf2;
-$bg-dark: #242424;
-$bg-light: #ffffff;
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -22,7 +18,7 @@ $bg-light: #ffffff;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: $bg-dark;
+  background-color: #1a1a1a;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -51,9 +47,8 @@ button {
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
-
   &:hover {
-    border-color: $primary-color;
+    border-color: rgba(255, 255, 255, 0.87);
   }
 
   &:focus,

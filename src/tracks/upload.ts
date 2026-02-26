@@ -6,26 +6,21 @@ export function bindUpload() {
   const input = document.getElementById("upload") as HTMLInputElement
   const canvas = document.getElementById("waveform") as HTMLCanvasElement
 
-  input.addEventListener("change", async () => {
-    const file = input.files?.[0]
-    if (!file) return
+input.addEventListener("change", async () => {
+  const file = input.files?.[0]
+  if (!file) return
 
-    const url = URL.createObjectURL(file)
+  const url = URL.createObjectURL(file)
 
-    store.currentTrack = {
-      fileName: file.name,
-      url,
-    }
+  store.currentTrack = {
+    fileName: file.name,
+    url,
+  }
 
-    loadTrack(url)
+  loadTrack(url)
+  drawWaveform(file, canvas)
 
-    if (canvas) {
-      drawWaveform(file, canvas)
-    }
-
-    const waveformCanvas =
-      document.getElementById("waveform") as HTMLCanvasElement
-
-  drawWaveform(file, waveformCanvas)
-  })
+  const playerEl = document.getElementById("player")
+  playerEl?.classList.remove("hidden")
+})
 }

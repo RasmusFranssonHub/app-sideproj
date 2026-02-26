@@ -16,10 +16,10 @@
           <li><a href="/in-progress">In progress</a></li>
           <li><a href="/review">Review</a></li>
           <li><a href="/completed">Completed</a></li>
+          <button id="login">Login</button>
         </ul>
       </nav>
     </div>
-      <p>Review. Refine. Release.</p>
     </header>
 
     <main>
@@ -27,26 +27,30 @@
 
       <!----------------------- UPLOAD FILE -------------------------->
       <!---- This is a placeholder for the file upload component. ---->
-      <input type="file" id="upload" accept="audio/*" />
-      
+      <div class="player-style">
+        <input type="file" id="upload" accept="audio/*" />
+        
 
-      <!------------------------- CANVAS ------------------------->
-      <div id="timeline">
-          <canvas id="waveform" width="800" height="100"></canvas>
-          <canvas id="playhead" width="800" height="100"></canvas>
-        </div>
+        <!------------------------- CANVAS ------------------------->
+        <div id="player" class="hidden">
+          <div id="timeline">
+              <canvas id="waveform" width="800" height="100"></canvas>
+              <canvas id="playhead" width="800" height="100"></canvas>
+            </div>
 
-        <div class="play-pause-controls">
-        <!-- This is a placeholder for the media player controls and display. -->
-        <p>
-          Time: <span id="current-time">0:00</span>
-        </p>
+            <div class="play-pause-controls">
+            <!-- This is a placeholder for the media player controls and display. -->
+            <p>
+              Time: <span id="current-time">0:00</span>
+            </p>
 
-        <!----------------------- MEDIAPLAYER -------------------------->
-        <!---- This is a placeholder for the media player component. ---->
-        <div class="play-pause"></div>
-          <button id="pause">Pause</button>
-          <button id="play">Play</button>
+            <!----------------------- MEDIAPLAYER -------------------------->
+            <!---- This is a placeholder for the media player component. ---->
+            <div class="play-pause"></div>
+              <button id="pause">Pause</button>
+              <button id="play">Play</button>
+            </div>
+          </div>
         </div>
       </div>
     </main>
