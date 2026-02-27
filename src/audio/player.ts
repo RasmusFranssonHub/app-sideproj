@@ -23,3 +23,4 @@ export function pause() {
   store.audio?.pause()
 }
 
+

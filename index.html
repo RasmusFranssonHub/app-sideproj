@@ -52,7 +52,33 @@
             </div>
           </div>
         </div>
+        <section id="comments-panel">
+          <h3>Comments</h3>
+          <ul id="comments-list"></ul>
+        </section>
       </div>
+
+      <div id="comment-popup" class="comment-popup hidden">
+  <h3>Add comment</h3>
+
+  <textarea id="comment-text" placeholder="Write your comment…"></textarea>
+
+  <div class="row">
+    <select id="comment-type">
+      <option value="general">General</option>
+      <option value="mix">Mix</option>
+      <option value="timing">Timing</option>
+      <option value="arrangement">Arrangement</option>
+    </select>
+
+    <input type="color" id="comment-color" value="#ff9800" />
+  </div>
+
+  <div class="actions">
+    <button id="comment-cancel">Cancel</button>
+    <button id="comment-save">Save</button>
+  </div>
+</div>
     </main>
 
     <footer>

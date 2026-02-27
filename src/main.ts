@@ -2,8 +2,11 @@ import "./styles/main.scss"
 
 import { bindUpload } from "./tracks/upload"
 import { bindPlayerControls } from "./ui/events"
-import { bindPlayheadDrag } from "./ui/timeline"
+import { bindSecondClick, bindSecondDrag } from "./ui/timeline"
+import { bindCommentPopup } from "./ui/comments"
 
 bindUpload()
 bindPlayerControls()
-bindPlayheadDrag()
+bindSecondClick()
+bindSecondDrag()
+bindCommentPopup()
