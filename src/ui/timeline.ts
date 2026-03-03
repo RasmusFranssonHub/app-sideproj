@@ -1,5 +1,6 @@
 import { store } from "../state/store"
 import { showCommentPopup } from "./comments"
+import { seekToSecond } from "../audio/player"
 
 // ─────────────────────────────────────────
 // ⏱️ TICK – transport-driven rendering
@@ -80,17 +81,6 @@ function getSecondFromMouse(
   const blockWidth = rect.width / seconds
 
   return Math.floor(x / blockWidth)
-}
-
-// ─────────────────────────────────────────
-// ⏩ SEEK
-// ─────────────────────────────────────────
-
-function seekToSecond(second: number) {
-  if (!store.audio) return
-  store.audio.currentTime = second
-  store.currentTime = second
-  store.currentSecond = second
 }
 
 // ─────────────────────────────────────────

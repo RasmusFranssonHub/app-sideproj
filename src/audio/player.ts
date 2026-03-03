@@ -23,4 +23,12 @@ export function pause() {
   store.audio?.pause()
 }
 
+export function seekToSecond(second: number) {
+  if (!store.audio) return
+
+  store.audio.currentTime = second
+  store.currentTime = second
+  store.currentSecond = Math.floor(second)
+}
+
 
