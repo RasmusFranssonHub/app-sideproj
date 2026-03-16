@@ -1,6 +1,5 @@
 /* ══════════════════════════════════════════
-   PLAYER BLOCK — card + popup + comments
-   as one connected unit, same width
+   PLAYER BLOCK
 ══════════════════════════════════════════ */
 
 .player-block {
@@ -14,12 +13,19 @@
 .player-card {
   background: #141414;
   border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 16px 16px 0 0;
+  border-radius: 16px;
   padding: 28px 32px 0;
   display: flex;
   flex-direction: column;
   gap: 18px;
   position: relative;
+  /* overflow hidden clips the fold-down */
+  overflow: hidden;
+}
+
+/* When popup is open, remove bottom radius so it flows into comments */
+.player-card.popup-open {
+  border-radius: 16px 16px 0 0;
 }
 
 /* ── Delete X ── */
@@ -46,16 +52,11 @@
   border-color: transparent;
 }
 
-.delete-project-btn svg {
-  width: 14px;
-  height: 14px;
-}
+.delete-project-btn svg { width: 14px; height: 14px; }
 
 /* ── Project name ── */
 
-.project-name {
-  text-align: center;
-}
+.project-name { text-align: center; }
 
 .project-name-input {
   background: transparent;
@@ -133,12 +134,11 @@
 #playhead-handle::before {
   content: '';
   position: absolute;
-  left: 50%;
-  top: 0;
+  left: 50%; top: 0;
   transform: translateX(-50%);
   width: 2px;
   height: 100%;
-  background: #ffffff;
+  background: #fff;
   opacity: 0.85;
 }
 
@@ -148,9 +148,8 @@
   top: 5px;
   left: 50%;
   transform: translateX(-50%);
-  width: 12px;
-  height: 12px;
-  background: #ffffff;
+  width: 12px; height: 12px;
+  background: #fff;
   border-radius: 50%;
   box-shadow: 0 0 0 2px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.8);
 }
@@ -191,12 +190,7 @@
   background: rgba(255,255,255,0.08);
 }
 
-.transport-btn:hover {
-  background: rgba(255,255,255,0.05);
-  color: rgba(255,255,255,0.9);
-  border-color: transparent;
-}
-
+.transport-btn:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.9); border-color: transparent; }
 .transport-btn.play-pause-btn { padding: 0.65em 2.2em; min-width: 80px; }
 .transport-btn .icon-play  { display: inline-block; }
 .transport-btn .icon-pause { display: none; }
@@ -231,7 +225,17 @@
   letter-spacing: 0.05em;
 }
 
-/* ── Comment trigger — last child of card, no bottom padding gap ── */
+/* ══════════════════════════════════════════
+   COMMENT SECTION
+   button + popup = one unit at bottom of card
+══════════════════════════════════════════ */
+
+.comment-section {
+  /* stretch edge-to-edge, cancel card's padding */
+  margin: 0 -32px;
+}
+
+/* ── Toggle button ── */
 
 .comment-trigger-btn {
   display: flex;
@@ -247,11 +251,10 @@
   font-size: 0.72em;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 13px 0;
+  padding: 13px 32px;
   cursor: pointer;
   width: 100%;
   transition: color 0.18s, background 0.18s;
-  /* no bottom border-radius — popup attaches here */
 }
 
 .comment-trigger-btn:hover {
@@ -267,34 +270,27 @@
 
 .comment-trigger-btn svg { width: 12px; height: 12px; }
 
-/* ══════════════════════════════════════════
-   COMMENT POPUP
-   — no top border, no gap, same width as card
-══════════════════════════════════════════ */
+/* ── Popup — folds DOWN, same width as button/card ── */
 
 .comment-popup {
   background: #1c1c1c;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-top: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
-  /* collapsed */
   max-height: 0;
-  transition: max-height 0.28s ease;
+  transition: max-height 0.3s ease;
 }
 
 .comment-popup.visible {
-  max-height: 220px;
+  max-height: 260px;
 }
 
-/* inner padding lives here so max-height collapses cleanly */
 .comment-popup-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 32px 0;
-  margin-bottom: 10px;
+  padding: 16px 32px 10px;
 }
 
 .comment-popup-header span {
@@ -345,7 +341,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 32px 18px;
+  padding: 0 32px 16px;
 }
 
 .comment-options {
@@ -367,8 +363,7 @@
 }
 
 .comment-options input[type="color"] {
-  width: 24px;
-  height: 24px;
+  width: 24px; height: 24px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -440,11 +435,6 @@
   border-top: none;
   border-radius: 0 0 16px 16px;
   overflow: hidden;
-}
-
-/* when popup is open, panel loses its top-left/right radius so it connects */
-.comment-popup.visible + #comments-panel {
-  border-radius: 0 0 16px 16px;
 }
 
 #comments-list {

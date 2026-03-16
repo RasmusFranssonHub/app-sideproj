@@ -26,6 +26,7 @@ function parseTime(str: string): number | null {
 }
 
 function openPopup() {
+  document.querySelector(".player-card")?.classList.add("popup-open")
   popupOpen = true
   popup.classList.remove('hidden')
   requestAnimationFrame(() => popup.classList.add('visible'))
