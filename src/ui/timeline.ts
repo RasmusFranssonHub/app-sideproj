@@ -3,10 +3,6 @@ import { showCommentPopup } from './comments'
 import { seekToSecond } from '../audio/player'
 import { renderWaveform } from '../audio/waveform'
 
-// ─────────────────────────────────────────
-// 🎨 TICK
-// ─────────────────────────────────────────
-
 function tick() {
   if (store.audio && !store.audio.paused) {
     store.currentTime = store.audio.currentTime
@@ -20,10 +16,7 @@ function tick() {
     const progress = store.currentTime / store.duration
     renderWaveform(canvas, progress)
     drawCommentMarkers(canvas)
-
-    if (handle) {
-      handle.style.left = `${progress * 100}%`
-    }
+    if (handle) handle.style.left = `${progress * 100}%`
   }
 
   requestAnimationFrame(tick)
@@ -31,27 +24,47 @@ function tick() {
 
 tick()
 
-// ─────────────────────────────────────────
-// 🔴 COMMENT MARKERS
-// ─────────────────────────────────────────
+// ── Numbered circles — perfectly round ──
 
 function drawCommentMarkers(canvas: HTMLCanvasElement) {
   const ctx = canvas.getContext('2d')
   if (!ctx || !store.duration) return
 
-  for (const comment of store.comments) {
-    if (comment.seconds.length === 0) continue
-    const x = (comment.seconds[0] / store.duration) * canvas.width
+  // Use CSS pixel size, not canvas internal resolution
+  const sorted = [...store.comments].sort((a, b) => a.seconds[0] - b.seconds[0])
+  const r = 11 // radius in canvas px
+
+  sorted.forEach((comment, i) => {
+    if (comment.seconds.length === 0) return
+
+    const cx = (comment.seconds[0] / store.duration) * canvas.width
+    const cy = canvas.height - r - 4
+
+    // Shadow for readability
+    ctx.shadowColor = 'rgba(0,0,0,0.6)'
+    ctx.shadowBlur = 4
+
+    // Circle — use equal x/y radius = perfect circle
     ctx.beginPath()
-    ctx.arc(x, canvas.height - 8, 3.5, 0, Math.PI * 2)
+    ctx.arc(cx, cy, r, 0, Math.PI * 2)
     ctx.fillStyle = comment.color
     ctx.fill()
-  }
-}
 
-// ─────────────────────────────────────────
-// 🧭 PIXEL → SECOND
-// ─────────────────────────────────────────
+    ctx.shadowBlur = 0
+
+    // Number
+    ctx.fillStyle = '#000000'
+    ctx.font = `bold ${Math.round(r * 1.1)}px/1 ui-monospace, monospace`
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(String(i + 1), cx, cy + 0.5)
+  })
+
+  // Reset
+  ctx.textAlign = 'start'
+  ctx.textBaseline = 'alphabetic'
+  ctx.shadowBlur = 0
+}
 
 function getSecondFromMouse(e: MouseEvent, canvas: HTMLCanvasElement): number | null {
   if (!store.duration) return null
@@ -59,10 +72,6 @@ function getSecondFromMouse(e: MouseEvent, canvas: HTMLCanvasElement): number | 
   const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width))
   return (x / rect.width) * store.duration
 }
-
-// ─────────────────────────────────────────
-// 🖱️ CLICK = seek + open comment popup
-// ─────────────────────────────────────────
 
 let isDragging = false
 
@@ -74,17 +83,12 @@ export function bindSecondClick() {
     if (isDragging) return
     const second = getSecondFromMouse(e, canvas)
     if (second === null) return
-
     seekToSecond(second)
     store.selectedSeconds.clear()
     store.selectedSeconds.add(Math.floor(second))
     showCommentPopup(second)
   })
 }
-
-// ─────────────────────────────────────────
-// ⏸ PAUSE = open comment popup
-// ─────────────────────────────────────────
 
 export function bindPauseComment() {
   store.audio?.addEventListener('pause', () => {
@@ -95,10 +99,6 @@ export function bindPauseComment() {
     showCommentPopup(t)
   })
 }
-
-// ─────────────────────────────────────────
-// 🖱️ DRAG playhead handle
-// ─────────────────────────────────────────
 
 export function bindPlayheadDrag() {
   const handle = document.getElementById('playhead-handle') as HTMLElement
@@ -125,6 +125,4 @@ export function bindPlayheadDrag() {
   })
 }
 
-export function bindSecondDrag() {
-  // Kept for main.ts compatibility — drag handled by bindPlayheadDrag
-}
+export function bindSecondDrag() {}

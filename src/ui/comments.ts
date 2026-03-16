@@ -20,9 +20,39 @@ export function formatTime(s: number): string {
 }
 
 function parseTime(str: string): number | null {
-  const match = str.match(/^(\d+):(\d{2})$/)
+  // Accept "1:23" or "1:" or ":23" — always needs the colon
+  const match = str.match(/^(\d*):(\d{0,2})$/)
   if (!match) return null
-  return parseInt(match[1]) * 60 + parseInt(match[2])
+  const m = parseInt(match[1] || '0')
+  const s = parseInt(match[2] || '0')
+  if (s > 59) return null
+  return m * 60 + s
+}
+
+// Enforce colon presence while typing
+function bindTimestampInput() {
+  timestampEl.addEventListener('keydown', (e) => {
+    const val = timestampEl.value
+    // Always keep the colon — prevent deleting it
+    if ((e.key === 'Backspace' || e.key === 'Delete') && val === ':') {
+      e.preventDefault()
+    }
+  })
+
+  timestampEl.addEventListener('input', () => {
+    let val = timestampEl.value
+    // If colon was deleted, re-add it
+    if (!val.includes(':')) {
+      val = val.replace(/\D/g, '')
+      timestampEl.value = val.length > 0 ? val + ':' : '0:'
+    }
+    // Strip non-numeric except colon
+    val = timestampEl.value
+    const parts = val.split(':')
+    const mins = parts[0].replace(/\D/g, '').slice(0, 2)
+    const secs = (parts[1] || '').replace(/\D/g, '').slice(0, 2)
+    timestampEl.value = `${mins}:${secs}`
+  })
 }
 
 function isOpen(): boolean {
@@ -70,6 +100,8 @@ export function showEditCommentPopup(commentId: string) {
 }
 
 export function bindCommentPopup() {
+  bindTimestampInput()
+
   commentBtn.addEventListener('click', () => {
     isOpen() ? hideCommentPopup() : showCommentPopup(store.audio?.currentTime ?? 0)
   })
@@ -125,7 +157,7 @@ export function bindCommentPopup() {
   document.getElementById('action-workspace')?.addEventListener('click', () => {
     const name = (document.getElementById('project-name-input') as HTMLInputElement)?.value || 'Untitled'
     saveCurrentProject(name)
-    window.location.href = '/app-sideproj/workspace'
+    window.location.href = '/app-sideproj/workspace.html'
   })
 
   document.getElementById('action-share')?.addEventListener('click', () => {
@@ -173,9 +205,9 @@ export function bindCommentPopup() {
 function showFeedback(id: string, msg: string) {
   const btn = document.getElementById(id)
   if (!btn) return
-  const orig = btn.textContent ?? ''
+  const orig = btn.innerHTML
   btn.textContent = msg
-  setTimeout(() => { btn.textContent = orig }, 2000)
+  setTimeout(() => { btn.innerHTML = orig }, 2000)
 }
 
 export function renderCommentsList() {
@@ -196,11 +228,13 @@ export function renderCommentsList() {
 
   const sorted = [...store.comments].sort((a, b) => a.seconds[0] - b.seconds[0])
 
-  for (const comment of sorted) {
+  sorted.forEach((comment, i) => {
+    const num = i + 1
     const li = document.createElement('li')
     li.className = 'comment-item'
     li.style.setProperty('--color', comment.color)
     li.innerHTML = `
+      <span class="comment-item-num" style="background:${comment.color}">${num}</span>
       <span class="comment-item-time">${formatTime(comment.seconds[0])}</span>
       <span class="comment-item-type">${comment.type}</span>
       <span class="comment-item-text">${comment.text || '<em class="comment-empty">no text</em>'}</span>
@@ -212,5 +246,5 @@ export function renderCommentsList() {
       showEditCommentPopup(comment.id)
     })
     list.appendChild(li)
-  }
+  })
 }
