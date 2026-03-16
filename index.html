@@ -15,7 +15,6 @@
           <ul>
             <li><a href="/uploads">Uploads</a></li>
             <li><a href="/in-progress">In progress</a></li>
-            <li><a href="/review">Review</a></li>
             <li><a href="/completed">Completed</a></li>
             <li><a href="/login">Login</a></li>
           </ul>
@@ -28,6 +27,7 @@
 
         <!----------------------- UPLOAD FILE -------------------------->
         <section class="player-style">
+          <label for="upload">Upload your audio file:</label>
           <input type="file" id="upload" accept="audio/*" />
         </section>
 
@@ -88,11 +88,11 @@
 
           <textarea 
             id="comment-text"
-            placeholder="Write your comment...">
-          </textarea>
+            placeholder="Write your comment..."
+            ></textarea>
 
           <div class="comment-options">
-
+            <label for="comment-type">Type:</label>
             <select id="comment-type">
               <option value="general">General</option>
               <option value="mix">Mix</option>
@@ -100,7 +100,8 @@
               <option value="arrangement">Arrangement</option>
             </select>
 
-            <input type="color" id="comment-color" value="#ff0000">
+            <label for="comment-color">Color:</label>
+            <input type="color" id="comment-color" value="#ff0000" />
 
           </div>
 
