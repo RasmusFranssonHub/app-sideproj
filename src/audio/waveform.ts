@@ -1,41 +1,52 @@
-export async function drawWaveform(
-  file: File,
-  canvas: HTMLCanvasElement
-) {
-  const ctx = canvas.getContext("2d")
-  if (!ctx) return
+export let waveformPeaks: number[] = []
 
+export async function drawWaveform(file: File, canvas: HTMLCanvasElement) {
   const arrayBuffer = await file.arrayBuffer()
   const audioContext = new AudioContext()
   const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
-
   const data = audioBuffer.getChannelData(0)
-  const sampleRate = audioBuffer.sampleRate
+  const totalSamples = data.length
+  const width = canvas.width
+  const samplesPerPx = totalSamples / width
 
-  const durationSeconds = Math.floor(audioBuffer.duration)
+  waveformPeaks = []
+  for (let px = 0; px < width; px++) {
+    const start = Math.floor(px * samplesPerPx)
+    const end = Math.floor((px + 1) * samplesPerPx)
+    let max = 0
+    for (let i = start; i < end; i++) {
+      const abs = Math.abs(data[i])
+      if (abs > max) max = abs
+    }
+    waveformPeaks.push(max)
+  }
+
+  renderWaveform(canvas, 0)
+}
+
+export function renderWaveform(canvas: HTMLCanvasElement, progress: number) {
+  const ctx = canvas.getContext('2d')
+  if (!ctx || waveformPeaks.length === 0) return
+
   const width = canvas.width
   const height = canvas.height
-  const blockWidth = width / durationSeconds
+  const playedX = Math.floor(progress * width)
 
   ctx.clearRect(0, 0, width, height)
-  ctx.fillStyle = "#4caf50"
 
-  for (let second = 0; second < durationSeconds; second++) {
-    const start = second * sampleRate
-    const end = start + sampleRate
+  for (let px = 0; px < width; px++) {
+    const peak = waveformPeaks[px]
+    const barHeight = Math.max(2, peak * height * 0.88)
+    const y = (height - barHeight) / 2
 
-    let sum = 0
-    for (let i = start; i < end; i++) {
-      sum += Math.abs(data[i])
+    if (px < playedX) {
+      // Played — bright white
+      ctx.fillStyle = 'rgba(255,255,255,0.90)'
+    } else {
+      // Unplayed — muted
+      ctx.fillStyle = 'rgba(255,255,255,0.18)'
     }
-
-    const rms = sum / sampleRate
-    const blockHeight = rms * height * 3 // gain, justera vid behov
-
-    const x = second * blockWidth
-    const y = (height - blockHeight) / 2
-
-    ctx.fillRect(x, y, blockWidth - 1, blockHeight)
+    ctx.fillRect(px, y, 1, barHeight)
   }
 }
 

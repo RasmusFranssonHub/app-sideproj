@@ -1,13 +1,10 @@
-// Imports scss
 @use "../audio/waveform.scss";
 @use "../styles/header.scss";
 @use "../styles/body.scss";
 @use "../styles/footer.scss";
-@use "../styles/player.scss";
 @use "../styles/nav.scss";
 @use "../styles/comments.scss";
 
-// Global styles and variables for functions
 #playhead {
   pointer-events: none;
 }
@@ -16,17 +13,14 @@
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #1a1a1a;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 
 body {
   margin: 0;
@@ -36,7 +30,6 @@ body {
   min-width: 1200px;
   min-height: 100vh;
 }
-
 
 button {
   border-radius: 8px;
@@ -48,13 +41,13 @@ button {
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
-  &:hover {
-    border-color: rgba(255, 255, 255, 0.87);
-  }
-
-  &:focus,
-  &:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
-  }
 }
 
+button:hover {
+  border-color: rgba(255, 255, 255, 0.87);
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}

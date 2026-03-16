@@ -1,9 +1,10 @@
-import { store } from "../state/store"
-import { showCommentPopup } from "./comments"
-import { seekToSecond } from "../audio/player"
+import { store } from '../state/store'
+import { showCommentPopup } from './comments'
+import { seekToSecond } from '../audio/player'
+import { renderWaveform } from '../audio/waveform'
 
 // ─────────────────────────────────────────
-// ⏱️ TICK – transport-driven rendering
+// 🎨 TICK
 // ─────────────────────────────────────────
 
 function tick() {
@@ -12,141 +13,118 @@ function tick() {
     store.currentSecond = Math.floor(store.audio.currentTime)
   }
 
-  drawTimeline()
+  const canvas = document.getElementById('waveform') as HTMLCanvasElement
+  const handle = document.getElementById('playhead-handle') as HTMLElement
+
+  if (canvas && store.duration > 0) {
+    const progress = store.currentTime / store.duration
+    renderWaveform(canvas, progress)
+    drawCommentMarkers(canvas)
+
+    if (handle) {
+      handle.style.left = `${progress * 100}%`
+    }
+  }
+
   requestAnimationFrame(tick)
 }
 
 tick()
 
 // ─────────────────────────────────────────
-// 🎨 DRAW TIMELINE (sekundblock)
+// 🔴 COMMENT MARKERS
 // ─────────────────────────────────────────
 
-function drawTimeline() {
-  const canvas = document.getElementById("waveform") as HTMLCanvasElement
-  if (!canvas) return
+function drawCommentMarkers(canvas: HTMLCanvasElement) {
+  const ctx = canvas.getContext('2d')
+  if (!ctx || !store.duration) return
 
-  const ctx = canvas.getContext("2d")
-  if (!ctx) return
-
-  const seconds = Math.ceil(store.duration)
-  if (seconds === 0) return
-
-  const blockWidth = canvas.width / seconds
-  const height = canvas.height
-
-  ctx.clearRect(0, 0, canvas.width, height)
-
-  for (let s = 0; s < seconds; s++) {
-    const isPlaying = s === store.currentSecond
-    const isSelected = store.selectedSeconds.has(s)
-    const hasComment = store.comments.some(c =>
-      c.seconds.includes(s)
-    )
-
-    // 🎯 PRIORITET: selection > comment > playhead > idle
-    if (isSelected) {
-      ctx.fillStyle = "#ff9800" // markerad
-    } else if (hasComment) {
-      ctx.fillStyle = "#e53935" // kommenterad
-    } else if (isPlaying) {
-      ctx.fillStyle = "#4caf50" // spelar
-    } else {
-      ctx.fillStyle = "#2b2b2b" // idle
-    }
-
-    ctx.fillRect(
-      s * blockWidth,
-      0,
-      blockWidth - 1,
-      height
-    )
+  for (const comment of store.comments) {
+    if (comment.seconds.length === 0) continue
+    const x = (comment.seconds[0] / store.duration) * canvas.width
+    ctx.beginPath()
+    ctx.arc(x, canvas.height - 8, 3.5, 0, Math.PI * 2)
+    ctx.fillStyle = comment.color
+    ctx.fill()
   }
 }
 
 // ─────────────────────────────────────────
-// 🧭 MOUSE → SECOND
+// 🧭 PIXEL → SECOND
 // ─────────────────────────────────────────
 
-function getSecondFromMouse(
-  e: MouseEvent,
-  canvas: HTMLCanvasElement
-): number | null {
+function getSecondFromMouse(e: MouseEvent, canvas: HTMLCanvasElement): number | null {
   if (!store.duration) return null
-
   const rect = canvas.getBoundingClientRect()
   const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width))
-
-  const seconds = Math.ceil(store.duration)
-  const blockWidth = rect.width / seconds
-
-  return Math.floor(x / blockWidth)
+  return (x / rect.width) * store.duration
 }
 
 // ─────────────────────────────────────────
-// 🖱️ CLICK = SEEK + SELECT
+// 🖱️ CLICK = seek + open comment popup
 // ─────────────────────────────────────────
+
+let isDragging = false
 
 export function bindSecondClick() {
-  const canvas = document.getElementById("waveform") as HTMLCanvasElement
+  const canvas = document.getElementById('waveform') as HTMLCanvasElement
   if (!canvas) return
 
-  canvas.addEventListener("click", (e) => {
+  canvas.addEventListener('click', (e) => {
+    if (isDragging) return
     const second = getSecondFromMouse(e, canvas)
     if (second === null) return
 
-    store.selectedSeconds.clear()
-    store.selectedSeconds.add(second)
-
     seekToSecond(second)
+    store.selectedSeconds.clear()
+    store.selectedSeconds.add(Math.floor(second))
+    showCommentPopup(second)
   })
 }
 
 // ─────────────────────────────────────────
-// 🖱️ DRAG = MULTI-SELECT
+// ⏸ PAUSE = open comment popup
 // ─────────────────────────────────────────
 
-let isSelecting = false
-let selectionStart: number | null = null
+export function bindPauseComment() {
+  store.audio?.addEventListener('pause', () => {
+    if (!store.audio || store.audio.ended) return
+    const t = store.audio.currentTime
+    store.selectedSeconds.clear()
+    store.selectedSeconds.add(Math.floor(t))
+    showCommentPopup(t)
+  })
+}
+
+// ─────────────────────────────────────────
+// 🖱️ DRAG playhead handle
+// ─────────────────────────────────────────
+
+export function bindPlayheadDrag() {
+  const handle = document.getElementById('playhead-handle') as HTMLElement
+  const timeline = document.getElementById('timeline') as HTMLElement
+  if (!handle || !timeline) return
+
+  handle.addEventListener('mousedown', (e) => {
+    e.preventDefault()
+    isDragging = true
+    document.body.style.cursor = 'grabbing'
+  })
+
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging || !store.duration) return
+    const rect = timeline.getBoundingClientRect()
+    const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width))
+    seekToSecond((x / rect.width) * store.duration)
+  })
+
+  window.addEventListener('mouseup', () => {
+    if (!isDragging) return
+    isDragging = false
+    document.body.style.cursor = ''
+  })
+}
 
 export function bindSecondDrag() {
-  const canvas = document.getElementById("waveform") as HTMLCanvasElement
-  if (!canvas) return
-
-  canvas.addEventListener("mousedown", (e) => {
-    const second = getSecondFromMouse(e, canvas)
-    if (second === null) return
-
-    isSelecting = true
-    selectionStart = second
-    store.selectedSeconds.clear()
-    store.selectedSeconds.add(second)
-  })
-
-  window.addEventListener("mousemove", (e) => {
-    if (!isSelecting || selectionStart === null) return
-
-    const second = getSecondFromMouse(e, canvas)
-    if (second === null) return
-
-    store.selectedSeconds.clear()
-
-    const from = Math.min(selectionStart, second)
-    const to = Math.max(selectionStart, second)
-
-    for (let s = from; s <= to; s++) {
-      store.selectedSeconds.add(s)
-    }
-  })
-
-  window.addEventListener("mouseup", () => {
-    if (!isSelecting) return
-
-    isSelecting = false
-    selectionStart = null
-
-    if (store.selectedSeconds.size > 0) {
-      showCommentPopup()
-    }
-  })
+  // Kept for main.ts compatibility — drag handled by bindPlayheadDrag
 }

@@ -1,17 +1,535 @@
-// Layered styles for the waveform and playhead canvases
-#timeline {
-  position: relative;
-  width: 800px;
-  height: 200px;
+/* ══════════════════════════════════════════
+   PLAYER CARD
+══════════════════════════════════════════ */
+
+.player-card {
+  background: #141414;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px 16px 0 0;
+  padding: 28px 32px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 900px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
 }
 
-#waveform,
-#playhead {
+/* ── Project name ── */
+
+.project-name {
+  width: 100%;
+  text-align: center;
+  margin: 0;
+}
+
+.project-name-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 1.05em;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2em 0.4em;
+  text-align: center;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+
+.project-name-input:hover {
+  border-bottom-color: rgba(255, 255, 255, 0.15);
+}
+
+.project-name-input:focus {
+  outline: none;
+  border-bottom-color: rgba(255, 255, 255, 0.5);
+}
+
+/* ── Timeline row ── */
+
+.timeline-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.time-display {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.75em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.35);
+  min-width: 34px;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+/* ── Waveform ── */
+
+#timeline {
+  position: relative;
+  flex: 1;
+  height: 96px;
+  cursor: pointer;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #0a0a0a;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#waveform {
   position: absolute;
   top: 0;
   left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
-#playhead {
-  pointer-events: none;
+/* ── Playhead handle ── */
+
+#playhead-handle {
+  position: absolute;
+  top: 0;
+  width: 18px;
+  height: 100%;
+  transform: translateX(-50%);
+  cursor: grab;
+  z-index: 10;
+}
+
+#playhead-handle:active {
+  cursor: grabbing;
+}
+
+#playhead-handle::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 100%;
+  background: #ffffff;
+  opacity: 0.85;
+}
+
+#playhead-handle::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.8);
+}
+
+/* ── Transport ── */
+
+.transport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.transport-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0.65em 1.6em;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  position: relative;
+}
+
+.transport-btn + .transport-btn::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.transport-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.transport-btn.play-pause-btn {
+  padding: 0.65em 2.2em;
+  min-width: 80px;
+}
+
+.transport-btn .icon-play {
+  display: inline-block;
+}
+
+.transport-btn .icon-pause {
+  display: none;
+}
+
+.transport-btn.play-pause-btn.is-playing {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.transport-btn.play-pause-btn.is-playing .icon-play {
+  display: none;
+}
+
+.transport-btn.play-pause-btn.is-playing .icon-pause {
+  display: inline-block;
+}
+
+.transport-btn svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+/* ── Speed ── */
+
+.playback-speed-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.75em;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.playback-speed-control select {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.95em;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+
+.playback-speed-control label {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  letter-spacing: 0.05em;
+}
+
+/* ── Comment trigger button ── */
+
+.comment-trigger-row {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0 0;
+}
+
+.comment-trigger-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 0.75em;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: color 0.2s;
+  width: 100%;
+  justify-content: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.comment-trigger-btn:hover {
+  color: rgba(255, 255, 255, 0.55);
+  border-color: transparent;
+}
+
+.comment-trigger-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* ══════════════════════════════════════════
+   COMMENT POPUP — folds out from bottom of card
+══════════════════════════════════════════ */
+
+.comment-popup {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: none;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 18px 32px 20px;
+  width: 900px;
+  box-sizing: border-box;
+  border-radius: 0;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.comment-popup.visible {
+  max-height: 300px;
+  padding: 18px 32px 20px;
+}
+
+.comment-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.comment-popup-header span {
+  font-size: 0.72em;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.comment-timestamp-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.82em;
+  letter-spacing: 0.05em;
+  padding: 2px 4px;
+  text-align: center;
+  width: 52px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.comment-timestamp-input:hover {
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.comment-timestamp-input:focus {
+  outline: none;
+  border-bottom-color: rgba(255, 255, 255, 0.6);
+  color: #fff;
+}
+
+.comment-popup textarea {
+  width: 100%;
+  height: 64px;
+  margin: 0 0 12px 0;
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: inherit;
+  font-size: 0.9em;
+  padding: 8px 10px;
+  resize: none;
+  box-sizing: border-box;
+}
+
+.comment-popup textarea:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.comment-options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  font-size: 0.8em;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.comment-options select {
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 3px 6px;
+  font-size: 0.95em;
+  cursor: pointer;
+}
+
+.comment-options input[type="color"] {
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 0;
+  background: none;
+}
+
+.comment-popup-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comment-popup-actions-right {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-delete {
+  background: transparent;
+  border: 1px solid rgba(255, 80, 80, 0.3);
+  border-radius: 7px;
+  color: rgba(255, 100, 100, 0.6);
+  font-size: 0.8em;
+  padding: 0.4em 0.9em;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-delete:hover {
+  border-color: rgba(255, 80, 80, 0.7);
+  color: rgba(255, 100, 100, 0.9);
+}
+
+.btn-cancel {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 7px;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.8em;
+  padding: 0.4em 0.9em;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-cancel:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.btn-save {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.8em;
+  font-weight: 600;
+  padding: 0.4em 1.1em;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-save:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ══════════════════════════════════════════
+   COMMENTS LIST — below card, visually connected
+══════════════════════════════════════════ */
+
+.hidden {
+  display: none;
+}
+
+#comments-panel {
+  width: 900px;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-top: none;
+  border-radius: 0 0 16px 16px;
+  overflow: hidden;
+}
+
+#comments-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.comment-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-left: 3px solid var(--color);
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.12s;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.comment-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.comment-item-time {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.72em;
+  color: var(--color);
+  opacity: 0.9;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 32px;
+}
+
+.comment-item-type {
+  font-size: 0.68em;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  min-width: 72px;
+}
+
+.comment-item-text {
+  font-size: 0.85em;
+  color: rgba(255, 255, 255, 0.65);
+  flex: 1;
+}
+
+.comment-empty {
+  opacity: 0.3;
+  font-style: italic;
+}
+
+.comment-item-edit {
+  font-size: 0.8em;
+  color: rgba(255, 255, 255, 0.15);
+  padding: 4px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  transition: color 0.15s, background 0.15s;
+  cursor: pointer;
+}
+
+.comment-item:hover .comment-item-edit {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.comment-item-edit:hover {
+  color: rgba(255, 255, 255, 0.8) !important;
+  background: rgba(255, 255, 255, 0.07);
 }

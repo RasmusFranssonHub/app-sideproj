@@ -8,9 +8,9 @@
   </head>
   <body>
     <div id="app">
-      <header>
+    <header>
       <div class="nav-bar-head">
-        <h1>SoundRev.</h1> 
+        <h1>SoundRev.</h1>
         <nav class="header-nav">
           <ul>
             <li><a href="/uploads">Uploads</a></li>
@@ -20,99 +20,126 @@
           </ul>
         </nav>
       </div>
-      </header>
+    </header>
 
-      <main>
-        <!-- The main content of the application will be rendered here by React. -->
+<!-- REPLACE everything inside <main> and the comment-popup div -->
 
-        <!----------------------- UPLOAD FILE -------------------------->
-        <section class="player-style">
-          <label for="upload">Upload your audio file:</label>
-          <input type="file" id="upload" accept="audio/*" />
-        </section>
+<main>
 
-          <!-------------------------- PLAYER -------------------------->
-          <section id="player" class="hidden">
+  <!-- UPLOAD -->
+  <section class="player-style">
+    <label for="upload">Upload your audio file:</label>
+    <input type="file" id="upload" accept="audio/*" />
+  </section>
 
-            <!----------------------- WAVEFORM -------------------------->
-            <div id="timeline">
-              <canvas id="waveform" width="800" height="100"></canvas>
-              <canvas id="playhead" width="800" height="100"></canvas>
-            </div>
-            <!----------------------- CONTROLS -------------------------->
-              <div class="play-pause-controls">
-                <button id="rewind">Rewind</button>
-                
-                <div class="play-pause">
-                  <button id="pause">Pause</button>
-                  <button id="play">Play</button>
-                </div>
-                
-                <button id="fast-forward">Fast Forward</button>
-              </div>
+  <!-- PLAYER CARD -->
+  <section id="player" class="hidden">
+    <div class="player-card">
 
-            
-              <!---------------------- TIME------------------------------->
-              <div class="current-time-display">
-                Time: <span id="current-time">0:00</span>
-              </div>
+      <!-- Project name -->
+      <div id="project-name" class="project-name hidden">
+        <input
+          id="project-name-input"
+          class="project-name-input"
+          type="text"
+          placeholder="PROJECT NAME"
+          spellcheck="false"
+        />
+      </div>
 
-              <div class="duration-display">
-                Duration: <span id="duration">0:00</span>
-              </div>
-
-                <div class="playback-speed-control">
-                  <label for="playback-speed">Speed:</label>
-                  <select id="playback-speed">
-                    <option value="0.5">0.5x</option>
-                    <option value="0.75">0.75x</option>
-                    <option value="1" selected>1x</option>
-                    <option value="1.25">1.25x</option>
-                    <option value="1.5">1.5x</option>
-                    <option value="2">2x</option>
-                  </select>
-                </div>
-          </section>
-
-          <!------------------------- COMMENTS -------------------------->
-          <section id="comments-panel">
-            <h3>Comments</h3>
-            <ul id="comments-list"></ul>
-          </section>
-      </main>
-
-      <!--COMMENTS POPUP-->
-        <div id="comment-popup" class="comment-popup hidden">
-
-          <h3>Add comment</h3>
-
-          <textarea 
-            id="comment-text"
-            placeholder="Write your comment..."
-            ></textarea>
-
-          <div class="comment-options">
-            <label for="comment-type">Type:</label>
-            <select id="comment-type">
-              <option value="general">General</option>
-              <option value="mix">Mix</option>
-              <option value="timing">Timing</option>
-              <option value="arrangement">Arrangement</option>
-            </select>
-
-            <label for="comment-color">Color:</label>
-            <input type="color" id="comment-color" value="#ff0000" />
-
-          </div>
-
-          <button id="save-comment">Save comment</button>
-
+      <!-- Waveform + timestamps -->
+      <div class="timeline-row">
+        <span id="current-time" class="time-display">0:00</span>
+        <div id="timeline">
+          <canvas id="waveform" width="1200" height="96"></canvas>
+          <div id="playhead-handle"></div>
         </div>
-      <!------------------------- FOOTER -------------------------->
+        <span id="duration" class="time-display">0:00</span>
+      </div>
 
-      <footer>
-        <p>&copy; 2024 SoundRev. All rights reserved.</p>
-      </footer>
+      <!-- Transport -->
+      <div class="transport">
+        <button id="rewind" class="transport-btn" title="Restart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="19 20 9 12 19 4 19 20"/>
+            <line x1="5" y1="4" x2="5" y2="20"/>
+          </svg>
+        </button>
+        <button id="play-pause" class="transport-btn play-pause-btn" title="Play / Pause">
+          <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="6" y="4" width="4" height="16"/>
+            <rect x="14" y="4" width="4" height="16"/>
+          </svg>
+        </button>
+        <button id="fast-forward" class="transport-btn" title="End">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 4 15 12 5 20 5 4"/>
+            <line x1="19" y1="4" x2="19" y2="20"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Comment button — bottom of card -->
+      <div class="comment-trigger-row">
+        <button id="comment-btn" class="comment-trigger-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          Comment
+        </button>
+      </div>
+
+      <!-- Comment popup — folds out from bottom of card -->
+      <div id="comment-popup" class="comment-popup hidden">
+        <div class="comment-popup-header">
+          <span id="comment-popup-title">Add comment</span>
+          <label for="comment-timestamp">Timestamp:</label>
+          <input
+            id="comment-timestamp"
+            class="comment-timestamp-input"
+            type="text"
+            value="0:00"
+            spellcheck="false"
+          />
+        </div>
+        <textarea id="comment-text" placeholder="Write your comment..."></textarea>
+        <div class="comment-options">
+          <label for="comment-type">Type:</label>
+          <select id="comment-type">
+            <option value="general">General</option>
+            <option value="mix">Mix</option>
+            <option value="timing">Timing</option>
+            <option value="arrangement">Arrangement</option>
+          </select>
+          <label for="comment-color">Color:</label>
+          <input type="color" id="comment-color" value="#ff0000" />
+        </div>
+        <div class="comment-popup-actions">
+          <button id="comment-delete" class="btn-delete" style="display:none">Delete</button>
+          <div class="comment-popup-actions-right">
+            <button id="comment-cancel" class="btn-cancel">Cancel</button>
+            <button id="save-comment" class="btn-save">Save</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.player-card -->
+
+    <!-- COMMENTS LIST — visually attached below card -->
+    <div id="comments-panel" class="hidden">
+      <ul id="comments-list"></ul>
+    </div>
+
+  </section>
+
+</main>
+    
+    <footer>
+      <p>&copy; 2024 SoundRev. All rights reserved.</p>
+    </footer>
     </div>
 
     <script type="module" src="/src/main.ts"></script>
