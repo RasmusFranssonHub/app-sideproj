@@ -1,5 +1,6 @@
 import { store } from '../state/store'
 import { seekToSecond } from '../audio/player'
+import { saveCurrentProject, exportProjectJson } from '../tracks/projects'
 
 const popup = document.getElementById('comment-popup')!
 const textEl = document.getElementById('comment-text') as HTMLTextAreaElement
@@ -49,8 +50,7 @@ export function showCommentPopup(timeSeconds: number) {
   textEl.value = ''
   typeEl.value = 'general'
   colorEl.value = '#ff0000'
-  const deleteBtn = document.getElementById('comment-delete') as HTMLButtonElement
-  deleteBtn.style.display = 'none'
+  ;(document.getElementById('comment-delete') as HTMLButtonElement).style.display = 'none'
   document.getElementById('comment-popup-title')!.textContent = 'Add comment'
   openPopup()
 }
@@ -64,21 +64,14 @@ export function showEditCommentPopup(commentId: string) {
   textEl.value = comment.text
   typeEl.value = comment.type
   colorEl.value = comment.color
-  const deleteBtn = document.getElementById('comment-delete') as HTMLButtonElement
-  deleteBtn.style.display = 'inline-flex'
+  ;(document.getElementById('comment-delete') as HTMLButtonElement).style.display = 'inline-flex'
   document.getElementById('comment-popup-title')!.textContent = 'Edit comment'
   openPopup()
 }
 
 export function bindCommentPopup() {
-  // Toggle open/close
   commentBtn.addEventListener('click', () => {
-    if (isOpen()) {
-      hideCommentPopup()
-    } else {
-      const t = store.audio?.currentTime ?? 0
-      showCommentPopup(t)
-    }
+    isOpen() ? hideCommentPopup() : showCommentPopup(store.audio?.currentTime ?? 0)
   })
 
   document.getElementById('comment-cancel')?.addEventListener('click', hideCommentPopup)
@@ -122,7 +115,34 @@ export function bindCommentPopup() {
     renderCommentsList()
   })
 
-  // Delete project modal
+  // Action bar
+  document.getElementById('action-save')?.addEventListener('click', () => {
+    const name = (document.getElementById('project-name-input') as HTMLInputElement)?.value || 'Untitled'
+    saveCurrentProject(name)
+    showFeedback('action-save', 'Saved ✓')
+  })
+
+  document.getElementById('action-workspace')?.addEventListener('click', () => {
+    const name = (document.getElementById('project-name-input') as HTMLInputElement)?.value || 'Untitled'
+    saveCurrentProject(name)
+    window.location.href = '/app-sideproj/workspace'
+  })
+
+  document.getElementById('action-share')?.addEventListener('click', () => {
+    const name = (document.getElementById('project-name-input') as HTMLInputElement)?.value || 'Untitled'
+    const project = saveCurrentProject(name)
+    exportProjectJson(project)
+    showFeedback('action-share', 'Downloaded ✓')
+  })
+
+  // Edit pencil
+  document.getElementById('project-name-edit')?.addEventListener('click', () => {
+    const input = document.getElementById('project-name-input') as HTMLInputElement
+    input.focus()
+    input.select()
+  })
+
+  // Delete modal
   document.getElementById('delete-project-btn')?.addEventListener('click', () => {
     document.getElementById('delete-modal')?.classList.remove('hidden')
   })
@@ -134,6 +154,7 @@ export function bindCommentPopup() {
     store.currentTrack = null
     store.duration = 0
     store.currentTime = 0
+    store.currentProjectId = null
     if (store.audio) { store.audio.pause(); store.audio = null }
     document.getElementById('player')?.classList.add('hidden')
     document.getElementById('delete-modal')?.classList.add('hidden')
@@ -142,22 +163,19 @@ export function bindCommentPopup() {
     renderCommentsList()
   })
   document.getElementById('modal-save')?.addEventListener('click', () => {
-    const projectName = (document.getElementById('project-name-input') as HTMLInputElement)?.value || 'project'
-    const data = {
-      name: projectName,
-      fileName: store.currentTrack?.fileName,
-      comments: store.comments,
-      savedAt: Date.now(),
-    }
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${projectName}.soundrev.json`
-    a.click()
-    URL.revokeObjectURL(url)
+    const name = (document.getElementById('project-name-input') as HTMLInputElement)?.value || 'Untitled'
+    const project = saveCurrentProject(name)
+    exportProjectJson(project)
     document.getElementById('delete-modal')?.classList.add('hidden')
   })
+}
+
+function showFeedback(id: string, msg: string) {
+  const btn = document.getElementById(id)
+  if (!btn) return
+  const orig = btn.textContent ?? ''
+  btn.textContent = msg
+  setTimeout(() => { btn.textContent = orig }, 2000)
 }
 
 export function renderCommentsList() {

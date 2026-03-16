@@ -1,0 +1,45 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SoundRev — Uploads</title>
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <div class="nav-bar-head">
+          <h1>SoundRev.</h1>
+          <nav class="header-nav">
+            <ul>
+              <li><a href="/app-sideproj/" class="nav-active">Uploads</a></li>
+              <li><a href="/app-sideproj/workspace">Workspace</a></li>
+              <li><a href="/app-sideproj/completed">Completed</a></li>
+              <li><a href="/app-sideproj/login">Login</a></li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+
+      <main class="uploads-main">
+        <div class="uploads-header">
+          <h2 class="uploads-title">Uploads</h2>
+          <a href="/app-sideproj/" class="btn-new-upload">+ New upload</a>
+        </div>
+
+        <div id="uploads-empty" class="uploads-empty hidden">
+          <p>No projects yet. <a href="/app-sideproj/">Upload your first track →</a></p>
+        </div>
+
+        <ul id="uploads-list" class="uploads-list"></ul>
+      </main>
+
+      <footer>
+        <p>&copy; 2024 SoundRev. All rights reserved.</p>
+      </footer>
+    </div>
+    <script type="module" src="/src/uploads-page.ts"></script>
+  </body>
+</html>

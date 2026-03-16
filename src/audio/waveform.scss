@@ -1,6 +1,6 @@
 /* ══════════════════════════════════════
-               PLAYER BLOCK 
-═══════════════════════════════════════  */
+   PLAYER BLOCK — stacks all pieces
+══════════════════════════════════════ */
 
 .player-block {
   display: flex;
@@ -469,4 +469,103 @@
   display: flex;
   justify-content: center;
   gap: 8px;
+}
+
+/* ══════════════════════════════════════
+   PROJECT NAME WITH EDIT PENCIL
+══════════════════════════════════════ */
+
+.project-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.project-name-edit-btn {
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: rgba(255,255,255,0.15);
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+
+.project-name-edit-btn:hover {
+  color: rgba(255,255,255,0.5);
+  border-color: transparent;
+}
+
+.project-name-edit-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* ══════════════════════════════════════
+   ACTION BAR
+══════════════════════════════════════ */
+
+.action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 0 4px;
+  width: 100%;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #141414;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  color: rgba(255,255,255,0.45);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.72em;
+  letter-spacing: 0.06em;
+  padding: 0.65em 1.2em;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.action-btn:hover {
+  background: #1c1c1c;
+  color: rgba(255,255,255,0.75);
+  border-color: rgba(255,255,255,0.15);
+}
+
+.action-btn-primary {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.7);
+  font-weight: 600;
+}
+
+.action-btn-primary:hover {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.9);
+}
+
+.action-btn svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+/* Re-upload notice */
+.reupload-notice {
+  background: rgba(255,200,50,0.08);
+  border: 1px solid rgba(255,200,50,0.15);
+  border-radius: 8px;
+  color: rgba(255,200,50,0.7);
+  font-size: 0.78em;
+  padding: 8px 14px;
+  text-align: center;
+  margin-bottom: 4px;
 }

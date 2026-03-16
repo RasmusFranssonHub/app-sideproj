@@ -24,6 +24,7 @@ export const store = {
   comments: [] as Comment[],
   selectedSeconds: new Set<number>(),
   activeCommentIds: new Set<string>(),
+  currentProjectId: null as string | null,
 }
 
 

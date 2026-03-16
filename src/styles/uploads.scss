@@ -1,0 +1,191 @@
+
+.uploads-main {
+  width: 900px;
+  margin: 0 auto;
+  padding: 48px 0;
+}
+
+.uploads-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.uploads-title {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.8em;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin: 0;
+}
+
+.btn-new-upload {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.75em;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.5);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 0.5em 1em;
+  text-decoration: none;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.btn-new-upload:hover {
+  color: rgba(255,255,255,0.85);
+  border-color: rgba(255,255,255,0.25);
+}
+
+.uploads-empty {
+  text-align: center;
+  color: rgba(255,255,255,0.3);
+  font-size: 0.9em;
+  padding: 60px 0;
+}
+
+.uploads-empty a {
+  color: rgba(255,255,255,0.5);
+}
+
+.uploads-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.upload-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #141414;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: background 0.12s;
+  gap: 16px;
+}
+
+.upload-item:last-child {
+  border-bottom: none;
+}
+
+.upload-item:hover {
+  background: #1a1a1a;
+}
+
+.upload-item-main {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex: 1;
+  min-width: 0;
+}
+
+.upload-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.upload-item-name {
+  font-size: 0.92em;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.upload-item-file {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.7em;
+  color: rgba(255,255,255,0.25);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.upload-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.upload-item-duration,
+.upload-item-comments,
+.upload-item-date {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.72em;
+  color: rgba(255,255,255,0.25);
+  white-space: nowrap;
+}
+
+.upload-item-comments {
+  color: rgba(255,255,255,0.35);
+}
+
+.upload-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.upload-btn-open {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 7px;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.78em;
+  font-weight: 600;
+  padding: 0.35em 0.9em;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.upload-btn-open:hover {
+  background: rgba(255,255,255,0.11);
+  border-color: transparent;
+}
+
+.upload-btn-export {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 7px;
+  color: rgba(255,255,255,0.35);
+  font-size: 0.78em;
+  padding: 0.35em 0.9em;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.upload-btn-export:hover {
+  border-color: rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.6);
+}
+
+.upload-btn-delete {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  color: rgba(255,255,255,0.15);
+  font-size: 0.78em;
+  padding: 0.35em 0.6em;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.upload-btn-delete:hover {
+  color: rgba(255,100,100,0.7);
+  background: rgba(255,80,80,0.07);
+}
