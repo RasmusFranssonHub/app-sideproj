@@ -6,9 +6,12 @@ const textEl = document.getElementById('comment-text') as HTMLTextAreaElement
 const typeEl = document.getElementById('comment-type') as HTMLSelectElement
 const colorEl = document.getElementById('comment-color') as HTMLInputElement
 const timestampEl = document.getElementById('comment-timestamp') as HTMLInputElement
+const commentBtn = document.getElementById('comment-btn')!
+const commentBtnLabel = document.getElementById('comment-btn-label')!
 
 let pendingTime = 0
 let editingCommentId: string | null = null
+let popupOpen = false
 
 export function formatTime(s: number): string {
   const m = Math.floor(s / 60)
@@ -22,6 +25,23 @@ function parseTime(str: string): number | null {
   return parseInt(match[1]) * 60 + parseInt(match[2])
 }
 
+function openPopup() {
+  popupOpen = true
+  popup.classList.remove('hidden')
+  requestAnimationFrame(() => popup.classList.add('visible'))
+  commentBtnLabel.textContent = 'Close'
+  commentBtn.classList.add('is-open')
+}
+
+export function hideCommentPopup() {
+  popupOpen = false
+  popup.classList.remove('visible')
+  setTimeout(() => popup.classList.add('hidden'), 300)
+  commentBtnLabel.textContent = 'Comment'
+  commentBtn.classList.remove('is-open')
+  editingCommentId = null
+}
+
 export function showCommentPopup(timeSeconds: number) {
   pendingTime = timeSeconds
   editingCommentId = null
@@ -29,51 +49,47 @@ export function showCommentPopup(timeSeconds: number) {
   textEl.value = ''
   typeEl.value = 'general'
   colorEl.value = '#ff0000'
-  document.getElementById('comment-delete')!.style.display = 'none'
+  const deleteBtn = document.getElementById('comment-delete') as HTMLButtonElement
+  deleteBtn.style.display = 'none'
   document.getElementById('comment-popup-title')!.textContent = 'Add comment'
-  popup.classList.remove('hidden')
-  popup.classList.add('visible')
-  setTimeout(() => textEl.focus(), 50)
+  openPopup()
+  setTimeout(() => textEl.focus(), 320)
 }
 
 export function showEditCommentPopup(commentId: string) {
   const comment = store.comments.find(c => c.id === commentId)
   if (!comment) return
-
   editingCommentId = commentId
   pendingTime = comment.seconds[0]
   timestampEl.value = formatTime(comment.seconds[0])
   textEl.value = comment.text
   typeEl.value = comment.type
   colorEl.value = comment.color
-  document.getElementById('comment-delete')!.style.display = 'block'
+  const deleteBtn = document.getElementById('comment-delete') as HTMLButtonElement
+  deleteBtn.style.display = 'inline-flex'
   document.getElementById('comment-popup-title')!.textContent = 'Edit comment'
-  popup.classList.remove('hidden')
-  popup.classList.add('visible')
-  setTimeout(() => textEl.focus(), 50)
-}
-
-export function hideCommentPopup() {
-  popup.classList.remove('visible')
-  popup.classList.add('hidden')
-  editingCommentId = null
+  openPopup()
+  setTimeout(() => textEl.focus(), 320)
 }
 
 export function bindCommentPopup() {
-  document.getElementById('comment-cancel')?.addEventListener('click', hideCommentPopup)
-
-  // Comment button in player
-  document.getElementById('comment-btn')?.addEventListener('click', () => {
-    const t = store.audio?.currentTime ?? 0
-    showCommentPopup(t)
+  // Toggle on comment button click
+  commentBtn.addEventListener('click', () => {
+    if (popupOpen) {
+      hideCommentPopup()
+    } else {
+      const t = store.audio?.currentTime ?? 0
+      showCommentPopup(t)
+    }
   })
+
+  document.getElementById('comment-cancel')?.addEventListener('click', hideCommentPopup)
 
   document.getElementById('save-comment')!.addEventListener('click', () => {
     const parsedTime = parseTime(timestampEl.value)
     const finalTime = parsedTime !== null ? parsedTime : pendingTime
 
     if (editingCommentId) {
-      // Update existing
       const idx = store.comments.findIndex(c => c.id === editingCommentId)
       if (idx !== -1) {
         store.comments[idx] = {
@@ -85,7 +101,6 @@ export function bindCommentPopup() {
         }
       }
     } else {
-      // New comment
       store.comments.push({
         id: crypto.randomUUID(),
         seconds: [Math.floor(finalTime)],
@@ -107,6 +122,45 @@ export function bindCommentPopup() {
     store.comments = store.comments.filter(c => c.id !== editingCommentId)
     hideCommentPopup()
     renderCommentsList()
+  })
+
+  // Delete project modal
+  document.getElementById('delete-project-btn')?.addEventListener('click', () => {
+    document.getElementById('delete-modal')?.classList.remove('hidden')
+  })
+  document.getElementById('modal-cancel')?.addEventListener('click', () => {
+    document.getElementById('delete-modal')?.classList.add('hidden')
+  })
+  document.getElementById('modal-confirm-delete')?.addEventListener('click', () => {
+    // Reset everything
+    store.comments = []
+    store.currentTrack = null
+    store.duration = 0
+    store.currentTime = 0
+    if (store.audio) { store.audio.pause(); store.audio = null }
+    document.getElementById('player')?.classList.add('hidden')
+    document.getElementById('delete-modal')?.classList.add('hidden')
+    document.querySelector('.player-style')?.classList.remove('hidden')
+    document.getElementById('project-name')?.classList.add('hidden')
+    renderCommentsList()
+  })
+  document.getElementById('modal-save')?.addEventListener('click', () => {
+    // Save project as JSON download
+    const projectName = (document.getElementById('project-name-input') as HTMLInputElement)?.value || 'project'
+    const data = {
+      name: projectName,
+      fileName: store.currentTrack?.fileName,
+      comments: store.comments,
+      savedAt: Date.now(),
+    }
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${projectName}.soundrev.json`
+    a.click()
+    URL.revokeObjectURL(url)
+    document.getElementById('delete-modal')?.classList.add('hidden')
   })
 }
 
@@ -134,25 +188,16 @@ export function renderCommentsList() {
       <span class="comment-item-time">${formatTime(comment.seconds[0])}</span>
       <span class="comment-item-type">${comment.type}</span>
       <span class="comment-item-text">${comment.text || '<em class="comment-empty">no text</em>'}</span>
-      <span class="comment-item-edit">✎</span>
+      <span class="comment-item-edit" title="Edit">✎</span>
     `
 
-    // Click left part = seek
-    const timeEl = li.querySelector('.comment-item-time')!
-    timeEl.addEventListener('click', (e) => {
-      e.stopPropagation()
-      seekToSecond(comment.seconds[0])
-    })
+    li.addEventListener('click', () => seekToSecond(comment.seconds[0]))
 
-    // Click edit icon = edit popup
     const editEl = li.querySelector('.comment-item-edit')!
     editEl.addEventListener('click', (e) => {
       e.stopPropagation()
       showEditCommentPopup(comment.id)
     })
-
-    // Click anywhere else = seek
-    li.addEventListener('click', () => seekToSecond(comment.seconds[0]))
 
     list.appendChild(li)
   }

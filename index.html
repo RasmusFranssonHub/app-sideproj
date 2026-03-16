@@ -22,120 +22,126 @@
       </div>
     </header>
 
-<!-- REPLACE everything inside <main> and the comment-popup div -->
+    <main>
 
-<main>
+      <!-- UPLOAD -->
+      <section class="player-style">
+        <label for="upload">Upload your audio file:</label>
+        <input type="file" id="upload" accept="audio/*" />
+      </section>
 
-  <!-- UPLOAD -->
-  <section class="player-style">
-    <label for="upload">Upload your audio file:</label>
-    <input type="file" id="upload" accept="audio/*" />
-  </section>
+      <!-- PLAYER CARD + POPUP + COMMENTS -->
+      <section id="player" class="hidden">
+        <div class="player-block">
 
-  <!-- PLAYER CARD -->
-  <section id="player" class="hidden">
-    <div class="player-card">
+          <!-- ── CARD ── -->
+          <div class="player-card">
 
-      <!-- Project name -->
-      <div id="project-name" class="project-name hidden">
-        <input
-          id="project-name-input"
-          class="project-name-input"
-          type="text"
-          placeholder="PROJECT NAME"
-          spellcheck="false"
-        />
-      </div>
+            <!-- Delete project X -->
+            <button id="delete-project-btn" class="delete-project-btn" title="Delete project">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
 
-      <!-- Waveform + timestamps -->
-      <div class="timeline-row">
-        <span id="current-time" class="time-display">0:00</span>
-        <div id="timeline">
-          <canvas id="waveform" width="1200" height="96"></canvas>
-          <div id="playhead-handle"></div>
-        </div>
-        <span id="duration" class="time-display">0:00</span>
-      </div>
+            <!-- Project name -->
+            <div id="project-name" class="project-name hidden">
+              <input id="project-name-input" class="project-name-input" type="text" placeholder="PROJECT NAME" spellcheck="false" />
+            </div>
 
-      <!-- Transport -->
-      <div class="transport">
-        <button id="rewind" class="transport-btn" title="Restart">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="19 20 9 12 19 4 19 20"/>
-            <line x1="5" y1="4" x2="5" y2="20"/>
-          </svg>
-        </button>
-        <button id="play-pause" class="transport-btn play-pause-btn" title="Play / Pause">
-          <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor">
-            <polygon points="5 3 19 12 5 21 5 3"/>
-          </svg>
-          <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor">
-            <rect x="6" y="4" width="4" height="16"/>
-            <rect x="14" y="4" width="4" height="16"/>
-          </svg>
-        </button>
-        <button id="fast-forward" class="transport-btn" title="End">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="5 4 15 12 5 20 5 4"/>
-            <line x1="19" y1="4" x2="19" y2="20"/>
-          </svg>
-        </button>
-      </div>
+            <!-- Waveform -->
+            <div class="timeline-row">
+              <span id="current-time" class="time-display">0:00</span>
+              <div id="timeline">
+                <canvas id="waveform" width="1200" height="96"></canvas>
+                <div id="playhead-handle"></div>
+              </div>
+              <span id="duration" class="time-display">0:00</span>
+            </div>
 
-      <!-- Comment button — bottom of card -->
-      <div class="comment-trigger-row">
-        <button id="comment-btn" class="comment-trigger-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-          </svg>
-          Comment
-        </button>
-      </div>
+            <!-- Transport -->
+            <div class="transport">
+              <button id="rewind" class="transport-btn" title="Restart">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="19 20 9 12 19 4 19 20"/>
+                  <line x1="5" y1="4" x2="5" y2="20"/>
+                </svg>
+              </button>
+              <button id="play-pause" class="transport-btn play-pause-btn" title="Play / Pause">
+                <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="6" y="4" width="4" height="16"/>
+                  <rect x="14" y="4" width="4" height="16"/>
+                </svg>
+              </button>
+              <button id="fast-forward" class="transport-btn" title="End">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="5 4 15 12 5 20 5 4"/>
+                  <line x1="19" y1="4" x2="19" y2="20"/>
+                </svg>
+              </button>
+            </div>
 
-      <!-- Comment popup — folds out from bottom of card -->
-      <div id="comment-popup" class="comment-popup hidden">
-        <div class="comment-popup-header">
-          <span id="comment-popup-title">Add comment</span>
-          <label for="comment-timestamp">Timestamp:</label>
-          <input
-            id="comment-timestamp"
-            class="comment-timestamp-input"
-            type="text"
-            value="0:00"
-            spellcheck="false"
-          />
-        </div>
-        <textarea id="comment-text" placeholder="Write your comment..."></textarea>
-        <div class="comment-options">
-          <label for="comment-type">Type:</label>
-          <select id="comment-type">
-            <option value="general">General</option>
-            <option value="mix">Mix</option>
-            <option value="timing">Timing</option>
-            <option value="arrangement">Arrangement</option>
-          </select>
-          <label for="comment-color">Color:</label>
-          <input type="color" id="comment-color" value="#ff0000" />
-        </div>
-        <div class="comment-popup-actions">
-          <button id="comment-delete" class="btn-delete" style="display:none">Delete</button>
-          <div class="comment-popup-actions-right">
-            <button id="comment-cancel" class="btn-cancel">Cancel</button>
-            <button id="save-comment" class="btn-save">Save</button>
+            <!-- Comment toggle — bottom of card, no gap to popup below -->
+            <button id="comment-btn" class="comment-trigger-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span id="comment-btn-label">Comment</span>
+            </button>
+
+          </div><!-- /.player-card -->
+
+          <!-- ── COMMENT POPUP — directly below card, same width ── -->
+          <div id="comment-popup" class="comment-popup hidden">
+            <div class="comment-popup-header">
+              <span id="comment-popup-title">Add comment</span>
+              <label for="comment-timestamp">Timestamp</label>
+              <input id="comment-timestamp" class="comment-timestamp-input" type="text" value="0:00" spellcheck="false" />
+            </div>
+            <textarea id="comment-text" placeholder="Write your comment..."></textarea>
+            <div class="comment-popup-footer">
+              <div class="comment-options">
+                <label for="comment-type">Type</label>
+                <select id="comment-type">
+                  <option value="general">General</option>
+                  <option value="mix">Mix</option>
+                  <option value="timing">Timing</option>
+                  <option value="arrangement">Arrangement</option>
+                </select>
+                <label for="comment-color">Color</label>
+                <input type="color" id="comment-color" value="#ff0000" />
+              </div>
+              <div class="comment-popup-actions">
+                <button id="comment-delete" class="btn-delete">Delete</button>
+                <button id="comment-cancel" class="btn-cancel">Cancel</button>
+                <button id="save-comment" class="btn-save">Save</button>
+              </div>
+            </div>
           </div>
+
+          <!-- ── COMMENTS LIST ── -->
+          <div id="comments-panel" class="hidden">
+            <ul id="comments-list"></ul>
+          </div>
+
+        </div><!-- /.player-block -->
+      </section>
+
+    </main>
+
+    <!-- DELETE MODAL -->
+    <div id="delete-modal" class="modal-overlay hidden">
+      <div class="modal">
+        <p class="modal-text">Are you sure you want to delete this project?</p>
+        <div class="modal-actions">
+          <button id="modal-save" class="btn-save">Save project</button>
+          <button id="modal-confirm-delete" class="btn-delete">Delete</button>
+          <button id="modal-cancel" class="btn-cancel">Cancel</button>
         </div>
       </div>
-
-    </div><!-- /.player-card -->
-
-    <!-- COMMENTS LIST — visually attached below card -->
-    <div id="comments-panel" class="hidden">
-      <ul id="comments-list"></ul>
     </div>
-
-  </section>
-
-</main>
     
     <footer>
       <p>&copy; 2024 SoundRev. All rights reserved.</p>
