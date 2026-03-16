@@ -30,14 +30,14 @@
         <input type="file" id="upload" accept="audio/*" />
       </section>
 
-      <!-- PLAYER BLOCK -->
       <section id="player" class="hidden">
+
+        <!-- All pieces stack as siblings inside player-block -->
         <div class="player-block">
 
-          <!-- ── CARD ── -->
+          <!-- 1. TOP CARD: name + waveform + transport -->
           <div class="player-card">
 
-            <!-- Delete X -->
             <button id="delete-project-btn" class="delete-project-btn" title="Delete project">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"/>
@@ -45,12 +45,10 @@
               </svg>
             </button>
 
-            <!-- Project name -->
             <div id="project-name" class="project-name hidden">
               <input id="project-name-input" class="project-name-input" type="text" placeholder="PROJECT NAME" spellcheck="false" />
             </div>
 
-            <!-- Waveform -->
             <div class="timeline-row">
               <span id="current-time" class="time-display">0:00</span>
               <div id="timeline">
@@ -60,7 +58,6 @@
               <span id="duration" class="time-display">0:00</span>
             </div>
 
-            <!-- Transport -->
             <div class="transport">
               <button id="rewind" class="transport-btn" title="Restart">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -83,49 +80,50 @@
               </button>
             </div>
 
-            <!-- Comment section: button + popup fold-down, all one unit -->
-            <div class="comment-section">
+          </div><!-- /.player-card -->
 
-              <button id="comment-btn" class="comment-trigger-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
-                <span id="comment-btn-label">Comment</span>
-              </button>
+          <!-- 2. COMMENT SECTION: button + popup as one block -->
+          <div class="comment-section">
 
-              <!-- Popup folds DOWN from button -->
-              <div id="comment-popup" class="comment-popup">
-                <div class="comment-popup-header">
-                  <span id="comment-popup-title">Add comment</span>
+            <button id="comment-btn" class="comment-trigger-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span id="comment-btn-label">Comment</span>
+            </button>
+
+            <div id="comment-popup" class="comment-popup">
+              <div class="comment-popup-header">
+                <span id="comment-popup-title">Add comment</span>
+                <div class="comment-timestamp-row">
                   <label for="comment-timestamp">Timestamp</label>
                   <input id="comment-timestamp" class="comment-timestamp-input" type="text" value="0:00" spellcheck="false" />
                 </div>
-                <textarea id="comment-text" placeholder="Write your comment..."></textarea>
-                <div class="comment-popup-footer">
-                  <div class="comment-options">
-                    <label for="comment-type">Type</label>
-                    <select id="comment-type">
-                      <option value="general">General</option>
-                      <option value="mix">Mix</option>
-                      <option value="timing">Timing</option>
-                      <option value="arrangement">Arrangement</option>
-                    </select>
-                    <label for="comment-color">Color</label>
-                    <input type="color" id="comment-color" value="#ff0000" />
-                  </div>
-                  <div class="comment-popup-actions">
-                    <button id="comment-delete" class="btn-delete">Delete</button>
-                    <button id="comment-cancel" class="btn-cancel">Cancel</button>
-                    <button id="save-comment" class="btn-save">Save</button>
-                  </div>
+              </div>
+              <textarea id="comment-text" placeholder="Write your comment..."></textarea>
+              <div class="comment-popup-footer">
+                <div class="comment-options">
+                  <label for="comment-type">Type</label>
+                  <select id="comment-type">
+                    <option value="general">General</option>
+                    <option value="mix">Mix</option>
+                    <option value="timing">Timing</option>
+                    <option value="arrangement">Arrangement</option>
+                  </select>
+                  <label for="comment-color">Color</label>
+                  <input type="color" id="comment-color" value="#ff0000" />
+                </div>
+                <div class="comment-popup-actions">
+                  <button id="comment-delete" class="btn-delete">Delete</button>
+                  <button id="comment-cancel" class="btn-cancel">Cancel</button>
+                  <button id="save-comment" class="btn-save">Save</button>
                 </div>
               </div>
+            </div>
 
-            </div><!-- /.comment-section -->
+          </div><!-- /.comment-section -->
 
-          </div><!-- /.player-card -->
-
-          <!-- Comments list — attached below card -->
+          <!-- 3. COMMENTS LIST -->
           <div id="comments-panel" class="hidden">
             <ul id="comments-list"></ul>
           </div>
@@ -146,13 +144,12 @@
         </div>
       </div>
     </div>
-    
+
     <footer>
       <p>&copy; 2024 SoundRev. All rights reserved.</p>
     </footer>
     </div>
 
     <script type="module" src="/src/main.ts"></script>
-    
   </body>
 </html>

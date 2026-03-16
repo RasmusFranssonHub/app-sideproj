@@ -11,7 +11,6 @@ const commentBtnLabel = document.getElementById('comment-btn-label')!
 
 let pendingTime = 0
 let editingCommentId: string | null = null
-let popupOpen = false
 
 export function formatTime(s: number): string {
   const m = Math.floor(s / 60)
@@ -25,19 +24,19 @@ function parseTime(str: string): number | null {
   return parseInt(match[1]) * 60 + parseInt(match[2])
 }
 
+function isOpen(): boolean {
+  return popup.classList.contains('visible')
+}
+
 function openPopup() {
-  document.querySelector(".player-card")?.classList.add("popup-open")
-  popupOpen = true
-  popup.classList.remove('hidden')
-  requestAnimationFrame(() => popup.classList.add('visible'))
+  popup.classList.add('visible')
   commentBtnLabel.textContent = 'Close'
   commentBtn.classList.add('is-open')
+  setTimeout(() => textEl.focus(), 50)
 }
 
 export function hideCommentPopup() {
-  popupOpen = false
   popup.classList.remove('visible')
-  setTimeout(() => popup.classList.add('hidden'), 300)
   commentBtnLabel.textContent = 'Comment'
   commentBtn.classList.remove('is-open')
   editingCommentId = null
@@ -54,7 +53,6 @@ export function showCommentPopup(timeSeconds: number) {
   deleteBtn.style.display = 'none'
   document.getElementById('comment-popup-title')!.textContent = 'Add comment'
   openPopup()
-  setTimeout(() => textEl.focus(), 320)
 }
 
 export function showEditCommentPopup(commentId: string) {
@@ -70,13 +68,12 @@ export function showEditCommentPopup(commentId: string) {
   deleteBtn.style.display = 'inline-flex'
   document.getElementById('comment-popup-title')!.textContent = 'Edit comment'
   openPopup()
-  setTimeout(() => textEl.focus(), 320)
 }
 
 export function bindCommentPopup() {
-  // Toggle on comment button click
+  // Toggle open/close
   commentBtn.addEventListener('click', () => {
-    if (popupOpen) {
+    if (isOpen()) {
       hideCommentPopup()
     } else {
       const t = store.audio?.currentTime ?? 0
@@ -133,7 +130,6 @@ export function bindCommentPopup() {
     document.getElementById('delete-modal')?.classList.add('hidden')
   })
   document.getElementById('modal-confirm-delete')?.addEventListener('click', () => {
-    // Reset everything
     store.comments = []
     store.currentTrack = null
     store.duration = 0
@@ -146,7 +142,6 @@ export function bindCommentPopup() {
     renderCommentsList()
   })
   document.getElementById('modal-save')?.addEventListener('click', () => {
-    // Save project as JSON download
     const projectName = (document.getElementById('project-name-input') as HTMLInputElement)?.value || 'project'
     const data = {
       name: projectName,
@@ -168,14 +163,17 @@ export function bindCommentPopup() {
 export function renderCommentsList() {
   const list = document.getElementById('comments-list')
   const panel = document.getElementById('comments-panel')
+  const commentSection = document.querySelector('.comment-section')
   if (!list || !panel) return
 
   list.innerHTML = ''
 
   if (store.comments.length > 0) {
     panel.classList.remove('hidden')
+    commentSection?.classList.add('panel-below')
   } else {
     panel.classList.add('hidden')
+    commentSection?.classList.remove('panel-below')
   }
 
   const sorted = [...store.comments].sort((a, b) => a.seconds[0] - b.seconds[0])
@@ -184,22 +182,17 @@ export function renderCommentsList() {
     const li = document.createElement('li')
     li.className = 'comment-item'
     li.style.setProperty('--color', comment.color)
-
     li.innerHTML = `
       <span class="comment-item-time">${formatTime(comment.seconds[0])}</span>
       <span class="comment-item-type">${comment.type}</span>
       <span class="comment-item-text">${comment.text || '<em class="comment-empty">no text</em>'}</span>
       <span class="comment-item-edit" title="Edit">✎</span>
     `
-
     li.addEventListener('click', () => seekToSecond(comment.seconds[0]))
-
-    const editEl = li.querySelector('.comment-item-edit')!
-    editEl.addEventListener('click', (e) => {
+    li.querySelector('.comment-item-edit')!.addEventListener('click', (e) => {
       e.stopPropagation()
       showEditCommentPopup(comment.id)
     })
-
     list.appendChild(li)
   }
 }

@@ -1,6 +1,6 @@
-/* ══════════════════════════════════════════
-   PLAYER BLOCK
-══════════════════════════════════════════ */
+/* ══════════════════════════════════════
+               PLAYER BLOCK 
+═══════════════════════════════════════  */
 
 .player-block {
   display: flex;
@@ -8,36 +8,27 @@
   width: 900px;
 }
 
-/* ── CARD ── */
+/* ── 1. TOP CARD ── */
 
 .player-card {
   background: #141414;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 16px;
-  padding: 28px 32px 0;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+  padding: 28px 32px 24px;
   display: flex;
   flex-direction: column;
   gap: 18px;
   position: relative;
-  /* overflow hidden clips the fold-down */
-  overflow: hidden;
 }
-
-/* When popup is open, remove bottom radius so it flows into comments */
-.player-card.popup-open {
-  border-radius: 16px 16px 0 0;
-}
-
-/* ── Delete X ── */
 
 .delete-project-btn {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 14px; right: 14px;
   background: transparent;
   border: none;
   border-radius: 6px;
-  color: rgba(255, 255, 255, 0.15);
+  color: rgba(255,255,255,0.15);
   padding: 5px;
   cursor: pointer;
   display: flex;
@@ -45,16 +36,12 @@
   justify-content: center;
   transition: color 0.15s, background 0.15s;
 }
-
 .delete-project-btn:hover {
-  color: rgba(255, 100, 100, 0.7);
-  background: rgba(255, 80, 80, 0.08);
+  color: rgba(255,100,100,0.7);
+  background: rgba(255,80,80,0.08);
   border-color: transparent;
 }
-
 .delete-project-btn svg { width: 14px; height: 14px; }
-
-/* ── Project name ── */
 
 .project-name { text-align: center; }
 
@@ -63,7 +50,7 @@
   border: none;
   border-bottom: 1px solid transparent;
   border-radius: 0;
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255,255,255,0.92);
   font-family: 'SF Mono', 'Fira Code', monospace;
   font-size: 1.05em;
   font-weight: 600;
@@ -74,11 +61,8 @@
   width: 100%;
   transition: border-color 0.2s;
 }
-
 .project-name-input:hover { border-bottom-color: rgba(255,255,255,0.15); }
 .project-name-input:focus { outline: none; border-bottom-color: rgba(255,255,255,0.5); }
-
-/* ── Timeline row ── */
 
 .timeline-row {
   display: flex;
@@ -90,13 +74,11 @@
   font-family: 'SF Mono', 'Fira Code', monospace;
   font-size: 0.75em;
   font-variant-numeric: tabular-nums;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255,255,255,0.35);
   min-width: 34px;
   text-align: center;
   letter-spacing: 0.04em;
 }
-
-/* ── Waveform ── */
 
 #timeline {
   position: relative;
@@ -109,7 +91,6 @@
   -webkit-user-select: none;
   user-select: none;
 }
-
 #waveform {
   position: absolute;
   top: 0; left: 0;
@@ -117,36 +98,28 @@
   display: block;
 }
 
-/* ── Playhead handle ── */
-
 #playhead-handle {
   position: absolute;
   top: 0;
-  width: 18px;
-  height: 100%;
+  width: 18px; height: 100%;
   transform: translateX(-50%);
   cursor: grab;
   z-index: 10;
 }
-
 #playhead-handle:active { cursor: grabbing; }
-
 #playhead-handle::before {
   content: '';
   position: absolute;
   left: 50%; top: 0;
   transform: translateX(-50%);
-  width: 2px;
-  height: 100%;
+  width: 2px; height: 100%;
   background: #fff;
   opacity: 0.85;
 }
-
 #playhead-handle::after {
   content: '';
   position: absolute;
-  top: 5px;
-  left: 50%;
+  top: 5px; left: 50%;
   transform: translateX(-50%);
   width: 12px; height: 12px;
   background: #fff;
@@ -154,20 +127,17 @@
   box-shadow: 0 0 0 2px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.8);
 }
 
-/* ── Transport ── */
-
 .transport {
   display: flex;
   align-items: center;
   justify-content: center;
   background: #0d0d0d;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 10px;
   overflow: hidden;
   width: fit-content;
   margin: 0 auto;
 }
-
 .transport-btn {
   display: flex;
   align-items: center;
@@ -175,13 +145,12 @@
   background: transparent;
   border: none;
   border-radius: 0;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255,255,255,0.5);
   padding: 0.65em 1.6em;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
   position: relative;
 }
-
 .transport-btn + .transport-btn::before {
   content: '';
   position: absolute;
@@ -189,7 +158,6 @@
   height: 60%; width: 1px;
   background: rgba(255,255,255,0.08);
 }
-
 .transport-btn:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.9); border-color: transparent; }
 .transport-btn.play-pause-btn { padding: 0.65em 2.2em; min-width: 80px; }
 .transport-btn .icon-play  { display: inline-block; }
@@ -199,17 +167,14 @@
 .transport-btn.play-pause-btn.is-playing .icon-pause { display: inline-block; }
 .transport-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
 
-/* ── Speed ── */
-
 .playback-speed-control {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   font-size: 0.75em;
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255,255,255,0.25);
 }
-
 .playback-speed-control select {
   background: transparent;
   border: 1px solid rgba(255,255,255,0.08);
@@ -219,71 +184,63 @@
   padding: 2px 6px;
   cursor: pointer;
 }
-
 .playback-speed-control label {
   font-family: 'SF Mono', 'Fira Code', monospace;
   letter-spacing: 0.05em;
 }
 
-/* ══════════════════════════════════════════
-   COMMENT SECTION
-   button + popup = one unit at bottom of card
-══════════════════════════════════════════ */
+/* ── 2. COMMENT SECTION ──
+   Sits directly below .player-card.
+   Button + popup are normal block children —
+   popup simply expands downward.
+── */
 
 .comment-section {
-  /* stretch edge-to-edge, cancel card's padding */
-  margin: 0 -32px;
+  background: #141414;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: none;
 }
 
-/* ── Toggle button ── */
-
+/* Toggle button */
 .comment-trigger-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+  width: 100%;
   background: transparent;
   border: none;
   border-radius: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.22);
+  color: rgba(255,255,255,0.22);
   font-family: 'SF Mono', 'Fira Code', monospace;
   font-size: 0.72em;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   padding: 13px 32px;
   cursor: pointer;
-  width: 100%;
   transition: color 0.18s, background 0.18s;
 }
-
 .comment-trigger-btn:hover {
-  color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.02);
+  color: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.02);
   border-color: transparent;
 }
-
 .comment-trigger-btn.is-open {
-  color: rgba(255, 255, 255, 0.45);
-  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.03);
 }
-
 .comment-trigger-btn svg { width: 12px; height: 12px; }
 
-/* ── Popup — folds DOWN, same width as button/card ── */
-
+/* Popup — expands downward inside .comment-section */
 .comment-popup {
-  background: #1c1c1c;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  width: 100%;
-  box-sizing: border-box;
   overflow: hidden;
   max-height: 0;
   transition: max-height 0.3s ease;
+  border-top: 1px solid rgba(255,255,255,0.05);
 }
-
 .comment-popup.visible {
-  max-height: 260px;
+  max-height: 280px;
 }
 
 .comment-popup-header {
@@ -292,21 +249,29 @@
   justify-content: space-between;
   padding: 16px 32px 10px;
 }
-
 .comment-popup-header span {
   font-size: 0.7em;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255,255,255,0.25);
 }
-
+.comment-timestamp-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.comment-timestamp-row label {
+  font-size: 0.72em;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.05em;
+}
 .comment-timestamp-input {
   background: transparent;
   border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
   border-radius: 0;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255,255,255,0.55);
   font-family: 'SF Mono', 'Fira Code', monospace;
   font-size: 0.8em;
   letter-spacing: 0.05em;
@@ -315,7 +280,6 @@
   width: 48px;
   transition: border-color 0.15s, color 0.15s;
 }
-
 .comment-timestamp-input:hover { border-bottom-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.85); }
 .comment-timestamp-input:focus { outline: none; border-bottom-color: rgba(255,255,255,0.6); color: #fff; }
 
@@ -323,18 +287,17 @@
   display: block;
   width: calc(100% - 64px);
   margin: 0 32px 12px;
-  height: 58px;
+  height: 60px;
   background: #111;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255,255,255,0.07);
   border-radius: 8px;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255,255,255,0.85);
   font-family: inherit;
   font-size: 0.88em;
   padding: 8px 10px;
   resize: none;
   box-sizing: border-box;
 }
-
 .comment-popup textarea:focus { outline: none; border-color: rgba(255,255,255,0.18); }
 
 .comment-popup-footer {
@@ -343,15 +306,13 @@
   justify-content: space-between;
   padding: 0 32px 16px;
 }
-
 .comment-options {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 0.78em;
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255,255,255,0.3);
 }
-
 .comment-options select {
   background: #111;
   border: 1px solid rgba(255,255,255,0.07);
@@ -361,77 +322,24 @@
   font-size: 0.95em;
   cursor: pointer;
 }
-
 .comment-options input[type="color"] {
   width: 24px; height: 24px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  padding: 0;
-  background: none;
+  border: none; border-radius: 4px;
+  cursor: pointer; padding: 0; background: none;
 }
-
 .comment-popup-actions {
   display: flex;
   gap: 6px;
   align-items: center;
 }
 
-/* ══════════════════════════════════════════
-   SHARED BUTTONS
-══════════════════════════════════════════ */
-
-.btn-delete {
-  background: transparent;
-  border: 1px solid rgba(255, 80, 80, 0.25);
-  border-radius: 7px;
-  color: rgba(255, 100, 100, 0.55);
-  font-size: 0.78em;
-  padding: 0.38em 0.9em;
-  cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
-  display: inline-flex;
-  align-items: center;
-}
-
-.btn-delete:hover { border-color: rgba(255,80,80,0.6); color: rgba(255,100,100,0.9); }
-
-.btn-cancel {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 7px;
-  color: rgba(255, 255, 255, 0.3);
-  font-size: 0.78em;
-  padding: 0.38em 0.9em;
-  cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
-}
-
-.btn-cancel:hover { border-color: rgba(255,255,255,0.18); color: rgba(255,255,255,0.6); }
-
-.btn-save {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 7px;
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 0.78em;
-  font-weight: 600;
-  padding: 0.38em 1em;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.btn-save:hover { background: rgba(255,255,255,0.11); border-color: transparent; }
-
-/* ══════════════════════════════════════════
-   COMMENTS LIST
-══════════════════════════════════════════ */
+/* ── 3. COMMENTS LIST ── */
 
 .hidden { display: none; }
 
 #comments-panel {
   background: #111;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255,255,255,0.07);
   border-top: none;
   border-radius: 0 0 16px 16px;
   overflow: hidden;
@@ -439,10 +347,8 @@
 
 #comments-list {
   list-style: none;
-  padding: 0;
-  margin: 0;
+  padding: 0; margin: 0;
 }
-
 .comment-item {
   display: flex;
   align-items: center;
@@ -451,12 +357,10 @@
   padding: 10px 16px;
   cursor: pointer;
   transition: background 0.12s;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
 }
-
 .comment-item:last-child { border-bottom: none; }
 .comment-item:hover { background: rgba(255,255,255,0.03); }
-
 .comment-item-time {
   font-family: 'SF Mono', 'Fira Code', monospace;
   font-size: 0.72em;
@@ -465,7 +369,6 @@
   flex-shrink: 0;
   min-width: 32px;
 }
-
 .comment-item-type {
   font-size: 0.68em;
   text-transform: uppercase;
@@ -474,15 +377,12 @@
   flex-shrink: 0;
   min-width: 72px;
 }
-
 .comment-item-text {
   font-size: 0.85em;
   color: rgba(255,255,255,0.6);
   flex: 1;
 }
-
 .comment-empty { opacity: 0.3; font-style: italic; }
-
 .comment-item-edit {
   font-size: 0.8em;
   color: rgba(255,255,255,0.12);
@@ -492,13 +392,55 @@
   transition: color 0.15s, background 0.15s;
   cursor: pointer;
 }
-
 .comment-item:hover .comment-item-edit { color: rgba(255,255,255,0.4); }
 .comment-item-edit:hover { color: rgba(255,255,255,0.8) !important; background: rgba(255,255,255,0.07); }
 
-/* ══════════════════════════════════════════
+/* ══════════════════════════════════════
+   SHARED BUTTONS
+══════════════════════════════════════ */
+
+.btn-delete {
+  background: transparent;
+  border: 1px solid rgba(255,80,80,0.25);
+  border-radius: 7px;
+  color: rgba(255,100,100,0.55);
+  font-size: 0.78em;
+  padding: 0.38em 0.9em;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  display: inline-flex;
+  align-items: center;
+}
+.btn-delete:hover { border-color: rgba(255,80,80,0.6); color: rgba(255,100,100,0.9); }
+
+.btn-cancel {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 7px;
+  color: rgba(255,255,255,0.3);
+  font-size: 0.78em;
+  padding: 0.38em 0.9em;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.btn-cancel:hover { border-color: rgba(255,255,255,0.18); color: rgba(255,255,255,0.6); }
+
+.btn-save {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 7px;
+  color: rgba(255,255,255,0.75);
+  font-size: 0.78em;
+  font-weight: 600;
+  padding: 0.38em 1em;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-save:hover { background: rgba(255,255,255,0.11); border-color: transparent; }
+
+/* ══════════════════════════════════════
    DELETE MODAL
-══════════════════════════════════════════ */
+══════════════════════════════════════ */
 
 .modal-overlay {
   position: fixed;
@@ -509,7 +451,6 @@
   justify-content: center;
   z-index: 2000;
 }
-
 .modal {
   background: #1a1a1a;
   border: 1px solid rgba(255,255,255,0.1);
@@ -518,14 +459,12 @@
   width: 340px;
   text-align: center;
 }
-
 .modal-text {
   color: rgba(255,255,255,0.7);
   font-size: 0.92em;
   margin: 0 0 20px;
   line-height: 1.5;
 }
-
 .modal-actions {
   display: flex;
   justify-content: center;
