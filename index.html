@@ -61,10 +61,17 @@
 
             <div class="timeline-row">
               <span id="current-time" class="time-display">0:00</span>
-              <div id="timeline">
-                <canvas id="waveform" width="1200" height="96"></canvas>
-                <div id="playhead-handle"></div>
+            
+              <div class="timeline-wrapper">
+                <!-- Waveform canvas + playhead (overflow:hidden clips here) -->
+                <div id="timeline">
+                  <canvas id="waveform" width="1200" height="96"></canvas>
+                  <div id="playhead-handle"></div>
+                </div>
+                <!-- Dots sit OUTSIDE #timeline so they are never clipped -->
+                <div id="timeline-dots" class="timeline-dots"></div>
               </div>
+            
               <span id="duration" class="time-display">0:00</span>
             </div>
 
@@ -120,8 +127,8 @@
                     <option value="timing">Timing</option>
                     <option value="arrangement">Arrangement</option>
                   </select>
-                  <label for="comment-color">Color</label>
-                  <input type="color" id="comment-color" value="#ff0000" />
+                  <!-- Pastel color swatches — replaces <input type="color"> -->
+                  <div id="comment-color-picker" class="color-picker-row"></div>
                 </div>
                 <div class="comment-popup-actions">
                   <button id="comment-delete" class="btn-delete">Delete</button>
@@ -137,32 +144,40 @@
           <div id="comments-panel" class="hidden">
             <ul id="comments-list"></ul>
           </div>
-          <div class="action-bar">
-            <button id="action-save" class="action-btn action-btn-primary">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                <polyline points="17 21 17 13 7 13 7 21"/>
-                <polyline points="7 3 7 8 15 8"/>
-              </svg>
-              Save to uploads
-            </button>
-            <button id="action-workspace" class="action-btn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-                <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-              </svg>
-              Open in workspace
-            </button>
-            <button id="action-share" class="action-btn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-              </svg>
-              Share track
-            </button>
-          </div>
-        </div><!-- /.player-block -->
+            <div class="action-bar-wrapper">
+              <div class="action-bar-header">
+                <div class="action-bar-header-line"></div>
+                <span class="action-bar-header-text">What to do with this project?</span>
+                <div class="action-bar-header-line"></div>
+              </div>
+              <div class="action-bar-frame">
+                <button id="action-save" class="action-btn action-btn-primary">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                    <polyline points="17 21 17 13 7 13 7 21"/>
+                    <polyline points="7 3 7 8 15 8"/>
+                  </svg>
+                  Save to uploads
+                </button>
+                <div class="action-bar-divider"></div>
+                <button id="action-workspace" class="action-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                  </svg>
+                  Open in workspace
+                </button>
+                <div class="action-bar-divider"></div>
+                <button id="action-share" class="action-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                  </svg>
+                  Share track
+                </button>
+              </div>
+            </div>
       </section>
 
     </main>

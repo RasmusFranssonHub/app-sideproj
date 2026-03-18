@@ -1,13 +1,84 @@
 
+/* ══════════════════════════════════════════
+   COMMENT DOTS — DOM elements in #timeline
+══════════════════════════════════════════ */
 
-.hidden {
-  display: none;
+.comment-dot {
+  /* Position */
+  position: absolute;
+  bottom: 6px;
+  transform: translateX(-50%);
+  z-index: 20;
+
+  /* Size */
+  width: 22px;
+  height: 22px;
+
+  /* Shape — perfect circle */
+  border-radius: 50%;
+
+  /* Color from JS custom property */
+  background: var(--dot-color);
+  border: 2px solid rgba(0, 0, 0, 0.35);
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.25);
+
+  /* Typography */
+  font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: rgba(0, 0, 0, 0.75);
+
+  /* Layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Interaction */
+  cursor: pointer;
+  transition:
+    transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+
+  /* Remove default button styles */
+  padding: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
-// Style comment panel and its elements 
+.comment-dot:hover {
+  transform: translateX(-50%) scale(1.6);
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.6),
+    0 0 0 3px rgba(255,255,255,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.35);
+  color: rgba(0, 0, 0, 0.9);
+  z-index: 30;
+}
+
+.comment-dot:active {
+  transform: translateX(-50%) scale(1.35);
+  transition-duration: 0.08s;
+}
+
+/* ══════════════════════════════════════════
+   COMMENT LIST
+══════════════════════════════════════════ */
+
+.hidden { display: none; }
 
 #comments-panel {
-  margin-top: 24px;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-top: none;
+  border-radius: 0 0 16px 16px;
+  overflow: hidden;
 }
 
 #comments-list {
@@ -17,18 +88,257 @@
 }
 
 .comment-item {
-  border-left: 6px solid var(--color);
-  padding: 8px 12px;
-  margin-bottom: 8px;
-  background: #1e1e1e;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  border-left: 3px solid var(--color);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   cursor: pointer;
+  transition: background 0.12s;
+}
+
+.comment-item:last-child {
+  border-bottom: none;
 }
 
 .comment-item:hover {
-  background: #2a2a2a;
+  background: rgba(255, 255, 255, 0.03);
 }
 
-.comment-seconds {
-  font-size: 12px;
-  opacity: 0.7;
+/* Number badge */
+.comment-item-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color);
+  border: 1.5px solid rgba(0, 0, 0, 0.2);
+  font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+  font-size: 9px;
+  font-weight: 800;
+  color: rgba(0, 0, 0, 0.75);
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.comment-item-time {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.7em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color);
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: 30px;
+  opacity: 0.9;
+}
+
+.comment-item-type {
+  font-size: 0.65em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+  min-width: 68px;
+}
+
+.comment-item-text {
+  font-size: 0.85em;
+  color: rgba(255, 255, 255, 0.62);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.comment-empty {
+  opacity: 0.28;
+  font-style: italic;
+}
+
+.comment-item-edit {
+  font-size: 0.78em;
+  color: rgba(255, 255, 255, 0.1);
+  padding: 4px 6px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: color 0.13s, background 0.13s;
+}
+
+.comment-item:hover .comment-item-edit {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.comment-item-edit:hover {
+  color: rgba(255, 255, 255, 0.8) !important;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* ══════════════════════════════════════════
+   COMMENT POPUP
+══════════════════════════════════════════ */
+
+.comment-popup {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.comment-popup.visible {
+  max-height: 280px;
+}
+
+.comment-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px 10px;
+}
+
+.comment-popup-header span {
+  font-size: 0.7em;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.comment-timestamp-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comment-timestamp-row label {
+  font-size: 0.72em;
+  color: rgba(255, 255, 255, 0.25);
+  letter-spacing: 0.05em;
+}
+
+.comment-timestamp-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0;
+  color: rgba(255, 255, 255, 0.55);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.8em;
+  letter-spacing: 0.05em;
+  padding: 2px 4px;
+  text-align: center;
+  width: 48px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.comment-timestamp-input:hover {
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.comment-timestamp-input:focus {
+  outline: none;
+  border-bottom-color: rgba(255, 255, 255, 0.6);
+  color: #fff;
+}
+
+.comment-popup textarea {
+  display: block;
+  width: calc(100% - 64px);
+  margin: 0 32px 12px;
+  height: 60px;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: inherit;
+  font-size: 0.88em;
+  padding: 8px 10px;
+  resize: none;
+  box-sizing: border-box;
+}
+
+.comment-popup textarea:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.comment-popup-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px 16px;
+}
+
+.comment-options {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78em;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.comment-options select {
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.55);
+  padding: 3px 6px;
+  font-size: 0.95em;
+  cursor: pointer;
+}
+
+.comment-options input[type="color"] {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0;
+  background: none;
+}
+
+.comment-popup-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* ══════════════════════════════════════════
+   DELETE MODAL
+══════════════════════════════════════════ */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 28px 32px 24px;
+  width: 340px;
+  text-align: center;
+}
+
+.modal-text {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.92em;
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
 }

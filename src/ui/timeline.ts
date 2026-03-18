@@ -2,6 +2,18 @@ import { store } from '../state/store'
 import { showCommentPopup } from './comments'
 import { seekToSecond } from '../audio/player'
 import { renderWaveform } from '../audio/waveform'
+import { renderCommentsList } from './comments'
+
+function formatTime(s: number): string {
+  const m = Math.floor(s / 60)
+  const sec = Math.floor(s % 60)
+  return `${m}:${sec.toString().padStart(2, '0')}`
+}
+
+// ─────────────────────────────────────────
+// TICK — only updates waveform + playhead
+// Dots are NOT redrawn every frame
+// ─────────────────────────────────────────
 
 function tick() {
   if (store.audio && !store.audio.paused) {
@@ -15,7 +27,6 @@ function tick() {
   if (canvas && store.duration > 0) {
     const progress = store.currentTime / store.duration
     renderWaveform(canvas, progress)
-    drawCommentMarkers(canvas)
     if (handle) handle.style.left = `${progress * 100}%`
   }
 
@@ -24,47 +35,74 @@ function tick() {
 
 tick()
 
-// ── Numbered circles — perfectly round ──
+// ─────────────────────────────────────────
+// COMMENT DOTS — rendered once, updated on change
+// ─────────────────────────────────────────
 
-function drawCommentMarkers(canvas: HTMLCanvasElement) {
-  const ctx = canvas.getContext('2d')
-  if (!ctx || !store.duration) return
+let isDraggingDot = false
 
-  // Use CSS pixel size, not canvas internal resolution
+export function renderCommentDots() {
+  const dotsContainer = document.getElementById('timeline-dots')
+  const timeline = document.getElementById('timeline')
+  if (!dotsContainer || !timeline || !store.duration) return
+
+  dotsContainer.querySelectorAll('.comment-dot').forEach(el => el.remove())
+
   const sorted = [...store.comments].sort((a, b) => a.seconds[0] - b.seconds[0])
-  const r = 11 // radius in canvas px
 
   sorted.forEach((comment, i) => {
     if (comment.seconds.length === 0) return
 
-    const cx = (comment.seconds[0] / store.duration) * canvas.width
-    const cy = canvas.height - r - 4
+    const dot = document.createElement('div')
+    dot.className = 'comment-dot'
+    dot.style.left = `${(comment.seconds[0] / store.duration) * 100}%`
+    dot.style.setProperty('--dot-color', comment.color)
+    dot.innerHTML = `
+      <div class="comment-dot-bubble">
+        <span class="comment-dot-time">${formatTime(comment.seconds[0])}</span>
+      </div>
+      <div class="comment-dot-arrow"></div>
+      <div class="comment-dot-circle">${i + 1}</div>
+    `
 
-    // Shadow for readability
-    ctx.shadowColor = 'rgba(0,0,0,0.6)'
-    ctx.shadowBlur = 4
+    const circle = dot.querySelector('.comment-dot-circle') as HTMLElement
+    const timeLabel = dot.querySelector('.comment-dot-time') as HTMLElement
 
-    // Circle — use equal x/y radius = perfect circle
-    ctx.beginPath()
-    ctx.arc(cx, cy, r, 0, Math.PI * 2)
-    ctx.fillStyle = comment.color
-    ctx.fill()
+    circle.addEventListener('mousedown', (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      isDraggingDot = true
+      document.body.style.cursor = 'grabbing'
 
-    ctx.shadowBlur = 0
+      const onMove = (ev: MouseEvent) => {
+        const rect = timeline.getBoundingClientRect()
+        const x = Math.max(0, Math.min(ev.clientX - rect.left, rect.width))
+        const newTime = (x / rect.width) * store.duration
+        comment.seconds[0] = Math.floor(newTime)
+        dot.style.left = `${(newTime / store.duration) * 100}%`
+        timeLabel.textContent = formatTime(newTime)
+      }
 
-    // Number
-    ctx.fillStyle = '#000000'
-    ctx.font = `bold ${Math.round(r * 1.1)}px/1 ui-monospace, monospace`
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.fillText(String(i + 1), cx, cy + 0.5)
+      const onUp = () => {
+        isDraggingDot = false
+        document.body.style.cursor = ''
+        window.removeEventListener('mousemove', onMove)
+        window.removeEventListener('mouseup', onUp)
+        renderCommentDots()
+        renderCommentsList()
+      }
+
+      window.addEventListener('mousemove', onMove)
+      window.addEventListener('mouseup', onUp)
+    })
+
+    dotsContainer.appendChild(dot)
   })
-
-  // Reset
-  ctx.textAlign = 'start'
-  ctx.textBaseline = 'alphabetic'
-  ctx.shadowBlur = 0
 }
+
+// ─────────────────────────────────────────
+// CLICK ON WAVEFORM
+// ─────────────────────────────────────────
 
 function getSecondFromMouse(e: MouseEvent, canvas: HTMLCanvasElement): number | null {
   if (!store.duration) return null
@@ -80,7 +118,7 @@ export function bindSecondClick() {
   if (!canvas) return
 
   canvas.addEventListener('click', (e) => {
-    if (isDragging) return
+    if (isDragging || isDraggingDot) return
     const second = getSecondFromMouse(e, canvas)
     if (second === null) return
     seekToSecond(second)

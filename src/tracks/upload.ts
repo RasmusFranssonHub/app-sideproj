@@ -2,7 +2,7 @@ import { store } from '../state/store'
 import { loadTrack } from '../audio/player'
 import drawWaveform from '../audio/waveform'
 import { rebindAudioEndedState } from '../ui/events'
-import { bindPauseComment } from '../ui/timeline'
+import { bindPauseComment, } from '../ui/timeline'
 import { renderCommentsList } from '../ui/comments'
 import { type SavedProject } from '../tracks/projects'
 
@@ -11,7 +11,6 @@ export function bindUpload() {
   const canvas = document.getElementById('waveform') as HTMLCanvasElement
   const uploadSection = document.querySelector('.player-style') as HTMLElement
 
-  // Load project from uploads page if set
   const pending = sessionStorage.getItem('soundrev_load_project')
   if (pending) {
     sessionStorage.removeItem('soundrev_load_project')
@@ -66,7 +65,6 @@ function loadProjectIntoPlayer(project: SavedProject) {
 
   document.getElementById('player')?.classList.remove('hidden')
 
-  // Prompt to re-upload audio
   const notice = document.createElement('div')
   notice.className = 'reupload-notice'
   notice.innerHTML = `Re-upload <strong>${project.fileName}</strong> to resume playback`
