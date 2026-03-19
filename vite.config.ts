@@ -7,6 +7,7 @@ export default defineConfig({
       input: {
         main: 'index.html',
         uploads: 'uploads.html',
+        workspace: 'workspace.html',
       },
     },
   },

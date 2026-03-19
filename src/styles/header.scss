@@ -10,4 +10,16 @@
   min-width: 1200px;
 }
 
+.nav-logo {
+  text-decoration: none;
+  color: inherit;
+}
+
+.nav-logo:hover h1 {
+  opacity: 0.8;
+}
+
+.nav-logo h1 {
+  transition: opacity 0.15s;
+}
 

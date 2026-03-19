@@ -1,0 +1,406 @@
+/* ══════════════════════════════════════════
+   WORKSPACE
+══════════════════════════════════════════ */
+
+.workspace-main {
+  width: 100%;
+  max-width: 1300px;
+  padding: 40px 40px 120px;
+  box-sizing: border-box;
+}
+
+/* ── Top bar ── */
+
+.workspace-topbar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 36px;
+}
+
+.workspace-select-label {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.7em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin-right: 8px;
+}
+
+.workspace-project-select {
+  background: #141414;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  color: rgba(255,255,255,0.75);
+  font-size: 0.88em;
+  padding: 6px 12px;
+  cursor: pointer;
+  min-width: 220px;
+}
+
+.workspace-project-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.workspace-meta-file {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.7em;
+  color: rgba(255,255,255,0.25);
+}
+
+.workspace-meta-comments {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.7em;
+  color: rgba(255,255,255,0.35);
+}
+
+/* ── Empty state ── */
+
+.workspace-empty {
+  text-align: center;
+  color: rgba(255,255,255,0.25);
+  font-size: 0.9em;
+  padding: 80px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ── Board ── */
+
+.workspace-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.board-col {
+  background: #111;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.board-col-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: #141414;
+}
+
+.board-col-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.board-col-title {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.72em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  flex: 1;
+}
+
+.board-col-count {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.68em;
+  color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+  padding: 1px 7px;
+}
+
+.board-cards {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 80px;
+}
+
+/* ── Card ── */
+
+.board-card {
+  background: #1a1a1a;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-left: 3px solid var(--card-color);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: background 0.12s;
+}
+
+.board-card:hover {
+  background: #202020;
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.card-time {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.7em;
+  color: var(--card-color);
+  font-weight: 600;
+}
+
+.card-type {
+  font-size: 0.62em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.2);
+}
+
+.card-text {
+  font-size: 0.82em;
+  color: rgba(255,255,255,0.65);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.card-empty {
+  opacity: 0.3;
+  font-style: italic;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.card-seek {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 6px;
+  color: rgba(255,255,255,0.35);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.65em;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+
+.card-seek:hover {
+  color: rgba(255,255,255,0.75);
+  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.04);
+}
+
+.card-status-select {
+  background: #111;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 6px;
+  color: rgba(255,255,255,0.4);
+  font-size: 0.65em;
+  padding: 3px 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.board-col-empty {
+  font-size: 0.75em;
+  color: rgba(255,255,255,0.12);
+  text-align: center;
+  padding: 16px 0;
+  font-style: italic;
+}
+
+/* ══════════════════════════════════════════
+   MINI PLAYER — fixed bottom
+══════════════════════════════════════════ */
+
+.mini-player {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: #0d0d0d;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0 24px;
+  z-index: 100;
+  box-shadow: 0 -8px 32px rgba(0,0,0,0.5);
+}
+
+.mini-player-track {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 180px;
+  flex-shrink: 0;
+}
+
+.mini-track-name {
+  font-size: 0.82em;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.mini-track-file {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.62em;
+  color: rgba(255,255,255,0.2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.mini-player-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 24px;
+  flex-shrink: 0;
+}
+
+.mini-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.45);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, background 0.15s;
+}
+
+.mini-btn:hover {
+  color: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.06);
+  border-color: transparent;
+}
+
+.mini-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mini-btn-play {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.75);
+}
+
+.mini-btn-play .icon-play  { display: inline-block; }
+.mini-btn-play .icon-pause { display: none; }
+.mini-btn-play.is-playing  { color: #fff; background: rgba(255,255,255,0.12); }
+.mini-btn-play.is-playing .icon-play  { display: none; }
+.mini-btn-play.is-playing .icon-pause { display: inline-block; }
+
+.mini-player-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.mini-time {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.7em;
+  color: rgba(255,255,255,0.3);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.mini-progress-bar {
+  flex: 1;
+  height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+}
+
+.mini-progress-fill {
+  height: 100%;
+  background: rgba(255,255,255,0.5);
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+
+.mini-progress-bar:hover .mini-progress-fill {
+  background: rgba(255,255,255,0.8);
+}
+
+.mini-player-right {
+  flex-shrink: 0;
+  margin-left: 24px;
+}
+
+.mini-edit-link {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.68em;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.25);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.mini-edit-link:hover {
+  color: rgba(255,255,255,0.6);
+}
+
+/* Re-upload prompt in mini player */
+.mini-reupload {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.72em;
+  color: rgba(255,200,50,0.6);
+  flex-shrink: 0;
+  margin-right: 16px;
+}
+
+.mini-upload-label {
+  background: rgba(255,200,50,0.08);
+  border: 1px solid rgba(255,200,50,0.2);
+  border-radius: 6px;
+  color: rgba(255,200,50,0.7);
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.mini-upload-label:hover {
+  background: rgba(255,200,50,0.15);
+}
+
+/* Col dot colors — no inline styles */
+.board-col-dot--backlog  { background: #666; }
+.board-col-dot--progress { background: #f59e0b; }
+.board-col-dot--review   { background: #3b82f6; }
+.board-col-dot--done     { background: #22c55e; }

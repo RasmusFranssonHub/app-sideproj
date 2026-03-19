@@ -61,7 +61,6 @@ export function renderCommentDots() {
       <div class="comment-dot-bubble">
         <span class="comment-dot-time">${formatTime(comment.seconds[0])}</span>
       </div>
-      <div class="comment-dot-arrow"></div>
       <div class="comment-dot-circle">${i + 1}</div>
     `
 

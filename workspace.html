@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SoundRev — Workspace</title>
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <div class="nav-bar-head">
+          <a href="/app-sideproj/" class="nav-logo"><h1>SoundRev.</h1></a>
+          <nav class="header-nav">
+            <ul>
+              <li><a href="/app-sideproj/">+ New track</a></li>
+              <li><a href="/app-sideproj/uploads.html">Uploads</a></li>
+              <li><a href="/app-sideproj/workspace.html" class="nav-active">Workspace</a></li>
+              <li><a href="/app-sideproj/login.html">Login</a></li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+
+      <main class="workspace-main">
+
+        <!-- Top bar: project selector + meta -->
+        <div class="workspace-topbar">
+          <div class="workspace-project-select-wrap">
+            <label class="workspace-select-label">Project</label>
+            <select id="workspace-project-select" class="workspace-project-select" aria-label="Select project" title="Select project">
+              <option value="">— select a project —</option>
+            </select>
+          </div>
+          <div id="workspace-project-meta" class="workspace-project-meta hidden">
+            <span id="workspace-meta-file" class="workspace-meta-file"></span>
+            <span id="workspace-meta-comments" class="workspace-meta-comments"></span>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div id="workspace-empty" class="workspace-empty">
+          <p>Select a project above to start working.</p>
+          <a href="/app-sideproj/uploads.html" class="btn-new-upload">Go to uploads →</a>
+        </div>
+
+        <!-- Board -->
+        <div id="workspace-board" class="workspace-board hidden">
+          <div class="board-col" data-status="todo">
+            <div class="board-col-header">
+              <span class="board-col-dot board-col-dot--backlog"></span>
+              <span class="board-col-title">Backlog</span>
+              <span class="board-col-count" id="count-todo">0</span>
+            </div>
+            <div class="board-cards" id="cards-todo"></div>
+          </div>
+
+          <div class="board-col" data-status="working">
+            <div class="board-col-header">
+              <span class="board-col-dot board-col-dot--progress"></span>
+              <span class="board-col-title">In progress</span>
+              <span class="board-col-count" id="count-working">0</span>
+            </div>
+            <div class="board-cards" id="cards-working"></div>
+          </div>
+
+          <div class="board-col" data-status="review">
+            <div class="board-col-header">
+              <span class="board-col-dot board-col-dot--review"></span>
+              <span class="board-col-title">In review</span>
+              <span class="board-col-count" id="count-review">0</span>
+            </div>
+            <div class="board-cards" id="cards-review"></div>
+          </div>
+
+          <div class="board-col" data-status="done">
+            <div class="board-col-header">
+              <span class="board-col-dot board-col-dot--done"></span>
+              <span class="board-col-title">Done</span>
+              <span class="board-col-count" id="count-done">0</span>
+            </div>
+            <div class="board-cards" id="cards-done"></div>
+          </div>
+        </div>
+
+      </main>
+
+      <!-- Mini player — fixed bottom bar -->
+      <div id="mini-player" class="mini-player hidden">
+        <div class="mini-player-track">
+          <span id="mini-track-name" class="mini-track-name">—</span>
+          <span id="mini-track-file" class="mini-track-file"></span>
+        </div>
+
+        <div class="mini-player-controls">
+          <button id="mini-rewind" class="mini-btn" title="Restart" aria-label="Restart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="4" x2="5" y2="20"/>
+            </svg>
+          </button>
+          <button id="mini-play" class="mini-btn mini-btn-play" title="Play / Pause" aria-label="Play / Pause">
+            <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>
+            </svg>
+          </button>
+          <button id="mini-end" class="mini-btn" title="End" aria-label="End">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="4" x2="19" y2="20"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="mini-player-progress">
+          <span id="mini-current" class="mini-time">0:00</span>
+          <div class="mini-progress-bar" id="mini-progress-bar">
+            <div class="mini-progress-fill" id="mini-progress-fill"></div>
+          </div>
+          <span id="mini-duration" class="mini-time">0:00</span>
+        </div>
+
+        <div class="mini-player-right">
+          <a href="/app-sideproj/" id="mini-edit-link" class="mini-edit-link">Edit in player →</a>
+        </div>
+      </div>
+
+      <footer>
+        <p>&copy; 2024 SoundRev. All rights reserved.</p>
+      </footer>
+    </div>
+    <script type="module" src="/src/workspace-page.ts"></script>
+  </body>
+</html>
