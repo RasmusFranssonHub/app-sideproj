@@ -57,7 +57,7 @@ function bindTimestampInput() {
 
 // ── Pastel palette ──
 const PASTEL_COLORS = [
-  '#913c3c', '#e0a76d', '#f3e282', '#66aa66',
+  '#ffb3b3', '#ffcc99', '#fff099', '#b3f0b3',
   '#99ccff', '#d4b3ff', '#99e6e6', '#ffb3d9',
 ]
 
@@ -190,10 +190,20 @@ export function bindCommentPopup() {
   })
 
   // Action bar
-  document.getElementById('action-save')?.addEventListener('click', () => {
+  document.getElementById('action-save')?.addEventListener('click', async () => {
     const name = (document.getElementById('project-name-input') as HTMLInputElement)?.value || 'Untitled'
-    saveCurrentProject(name)
-    showFeedback('action-save', 'Saved ✓')
+    const { getUser } = await import('../lib/api')
+    const user = await getUser()
+    if (!user) {
+      window.location.href = '/app-sideproj/login.html'
+      return
+    }
+    try {
+      await saveCurrentProject(name)
+      showFeedback('action-save', 'Saved ✓')
+    } catch (e) {
+      showFeedback('action-save', 'Error saving')
+    }
   })
 
   document.getElementById('action-workspace')?.addEventListener('click', () => {
@@ -202,10 +212,25 @@ export function bindCommentPopup() {
     window.location.href = '/app-sideproj/workspace.html'
   })
 
-  document.getElementById('action-share')?.addEventListener('click', () => {
+  document.getElementById('action-share')?.addEventListener('click', async () => {
     const name = (document.getElementById('project-name-input') as HTMLInputElement)?.value || 'Untitled'
-    const project = saveCurrentProject(name)
-    exportProjectJson(project)
+    const { getUser } = await import('../lib/api')
+    const user = await getUser()
+    if (user) {
+      const project = await saveCurrentProject(name)
+      exportProjectJson(project)
+    } else {
+      // Export without saving if not logged in
+      exportProjectJson({
+        id: '',
+        name,
+        file_name: store.currentTrack?.fileName ?? '',
+        duration: store.duration,
+        audio_path: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+    }
     showFeedback('action-share', 'Downloaded ✓')
   })
 
@@ -234,9 +259,9 @@ export function bindCommentPopup() {
     document.getElementById('project-name')?.classList.add('hidden')
     renderCommentsList()
   })
-  document.getElementById('modal-save')?.addEventListener('click', () => {
+  document.getElementById('modal-save')?.addEventListener('click', async () => {
     const name = (document.getElementById('project-name-input') as HTMLInputElement)?.value || 'Untitled'
-    const project = saveCurrentProject(name)
+    const project = await saveCurrentProject(name)
     exportProjectJson(project)
     document.getElementById('delete-modal')?.classList.add('hidden')
   })

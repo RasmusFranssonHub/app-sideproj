@@ -1,6 +1,8 @@
 import './styles/main.scss'
 import './styles/workspace.scss'
-import { loadProjects, type SavedProject } from './tracks/projects'
+import { requireAuth, updateNav } from './lib/auth-guard'
+import { loadProjects, loadProjectWithComments, type SavedProject } from './tracks/projects'
+import { supabase } from './lib/superbase'
 
 type Status = 'todo' | 'working' | 'review' | 'done'
 
@@ -19,19 +21,8 @@ let cards: CommentCard[] = []
 let audio: HTMLAudioElement | null = null
 let isPlaying = false
 
-const STORAGE_KEY = 'soundrev_workspace_cards'
-
-function saveCards() {
-  if (!currentProject) return
-  const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
-  all[currentProject.id] = cards
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(all))
-}
-
-function loadCards(projectId: string): CommentCard[] {
-  const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
-  return all[projectId] || []
-}
+requireAuth().catch(() => {})
+updateNav()
 
 function formatTime(s: number): string {
   const m = Math.floor(s / 60)
@@ -39,11 +30,13 @@ function formatTime(s: number): string {
   return `${m}:${sec.toString().padStart(2, '0')}`
 }
 
-// ── Project selector ────────────────────────
-
-function populateProjectSelect() {
+async function populateProjectSelect() {
   const select = document.getElementById('workspace-project-select') as HTMLSelectElement
-  const projects = loadProjects()
+  let projects: SavedProject[] = []
+
+  try {
+    projects = await loadProjects()
+  } catch { /* not logged in */ }
 
   select.innerHTML = '<option value="">— select a project —</option>'
   projects.forEach(p => {
@@ -62,7 +55,7 @@ function populateProjectSelect() {
   return projects
 }
 
-function loadProject(project: SavedProject) {
+async function loadProject(project: SavedProject) {
   currentProject = project
 
   document.getElementById('workspace-empty')!.classList.add('hidden')
@@ -70,27 +63,31 @@ function loadProject(project: SavedProject) {
   document.getElementById('workspace-project-meta')!.classList.remove('hidden')
   document.getElementById('mini-player')!.classList.remove('hidden')
   document.getElementById('mini-track-name')!.textContent = project.name
-  document.getElementById('mini-track-file')!.textContent = project.fileName
-  document.getElementById('workspace-meta-file')!.textContent = project.fileName
-  document.getElementById('workspace-meta-comments')!.textContent =
-    `${project.comments.length} comment${project.comments.length !== 1 ? 's' : ''}`
+  document.getElementById('mini-track-file')!.textContent = project.file_name
+  document.getElementById('workspace-meta-file')!.textContent = project.file_name
 
-  const saved = loadCards(project.id)
-  cards = project.comments.map(c => {
-    const existing = saved.find(s => s.id === c.id)
-    return {
+  // Load comments from Supabase
+  try {
+    const { comments } = await loadProjectWithComments(project.id)
+    document.getElementById('workspace-meta-comments')!.textContent =
+      `${comments.length} comment${comments.length !== 1 ? 's' : ''}`
+
+    // Load saved statuses from Supabase comments table
+    cards = comments.map(c => ({
       id: c.id,
       seconds: c.seconds,
       text: c.text,
       type: c.type,
       color: c.color,
-      status: (existing ? existing.status : 'todo') as Status,
+      status: c.status as Status,
       createdAt: c.createdAt,
-    }
-  })
+    }))
+  } catch {
+    cards = []
+  }
 
   renderBoard()
-  setupAudio()
+  setupAudio(project)
 }
 
 function clearProject() {
@@ -100,8 +97,6 @@ function clearProject() {
   document.getElementById('workspace-project-meta')!.classList.add('hidden')
   document.getElementById('mini-player')!.classList.add('hidden')
 }
-
-// ── Board ────────────────────────────────────
 
 const STATUSES: Status[] = ['todo', 'working', 'review', 'done']
 
@@ -127,7 +122,7 @@ function renderBoard() {
     filtered.forEach(card => {
       const el = document.createElement('div')
       el.className = 'board-card'
-      el.dataset.color = card.color
+      el.style.setProperty('--card-color', card.color)
 
       el.innerHTML = `
         <div class="card-top">
@@ -146,23 +141,17 @@ function renderBoard() {
         </div>
       `
 
-      // Set color via CSS custom property on element
-      el.style.setProperty('--card-color', card.color)
-
       el.querySelector('.card-seek')!.addEventListener('click', () => {
-        if (audio) {
-          audio.currentTime = card.seconds[0]
-          audio.play()
-          setPlaying(true)
-        }
+        if (audio) { audio.currentTime = card.seconds[0]; audio.play(); setPlaying(true) }
       })
 
       const sel = el.querySelector('.card-status-select') as HTMLSelectElement
-      sel.addEventListener('change', () => {
+      sel.addEventListener('change', async () => {
         const idx = cards.findIndex(c => c.id === card.id)
         if (idx !== -1) {
           cards[idx].status = sel.value as Status
-          saveCards()
+          // Save status to Supabase
+          await supabase.from('comments').update({ status: sel.value }).eq('id', card.id)
           renderBoard()
         }
       })
@@ -172,39 +161,45 @@ function renderBoard() {
   })
 }
 
-// ── Audio ────────────────────────────────────
-
-function setupAudio() {
+function setupAudio(project: SavedProject) {
   const miniPlayer = document.getElementById('mini-player')!
-  const existing = miniPlayer.querySelector('.mini-reupload')
-  if (existing) existing.remove()
-
-  if (audio) {
-    audio.pause()
-    audio = null
-  }
+  miniPlayer.querySelector('.mini-reupload')?.remove()
+  if (audio) { audio.pause(); audio = null }
   setPlaying(false)
 
+  // Try to load from Supabase Storage
+  if (project.audio_path) {
+    supabase.storage.from('audio').createSignedUrl(project.audio_path, 3600).then(({ data }) => {
+      if (data?.signedUrl) {
+        audio = new Audio(data.signedUrl)
+        bindAudioEvents()
+        return
+      }
+      promptReupload(miniPlayer)
+    })
+  } else {
+    promptReupload(miniPlayer)
+  }
+}
+
+function promptReupload(miniPlayer: HTMLElement) {
   const notice = document.createElement('div')
   notice.className = 'mini-reupload'
-
   const label = document.createElement('label')
   label.className = 'mini-upload-label'
   label.textContent = 'Upload audio to play'
-
   const input = document.createElement('input')
   input.type = 'file'
   input.accept = 'audio/*'
   input.style.display = 'none'
-
   input.addEventListener('change', () => {
     const file = input.files?.[0]
     if (!file) return
+    if (audio) audio.pause()
     audio = new Audio(URL.createObjectURL(file))
     bindAudioEvents()
     notice.remove()
   })
-
   label.appendChild(input)
   notice.appendChild(label)
   miniPlayer.querySelector('.mini-player-controls')!.insertAdjacentElement('beforebegin', notice)
@@ -228,8 +223,7 @@ function updateProgress() {
 
 function setPlaying(playing: boolean) {
   isPlaying = playing
-  const btn = document.getElementById('mini-play')!
-  btn.classList.toggle('is-playing', playing)
+  document.getElementById('mini-play')!.classList.toggle('is-playing', playing)
 }
 
 function bindPlayerControls() {
@@ -238,12 +232,8 @@ function bindPlayerControls() {
     if (isPlaying) { audio.pause(); setPlaying(false) }
     else { audio.play(); setPlaying(true) }
   })
-  document.getElementById('mini-rewind')?.addEventListener('click', () => {
-    if (audio) audio.currentTime = 0
-  })
-  document.getElementById('mini-end')?.addEventListener('click', () => {
-    if (audio) audio.currentTime = audio.duration - 0.01
-  })
+  document.getElementById('mini-rewind')?.addEventListener('click', () => { if (audio) audio.currentTime = 0 })
+  document.getElementById('mini-end')?.addEventListener('click', () => { if (audio) audio.currentTime = audio.duration - 0.01 })
   document.getElementById('mini-progress-bar')?.addEventListener('click', (e) => {
     if (!audio) return
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
@@ -251,9 +241,8 @@ function bindPlayerControls() {
   })
 }
 
-// ── Init ────────────────────────────────────
-
-const projects = populateProjectSelect()
+// ── Init ─────────────────────────────────
+const projects = await populateProjectSelect()
 bindPlayerControls()
 
 const pending = sessionStorage.getItem('soundrev_load_project')
@@ -263,7 +252,7 @@ if (pending) {
   const select = document.getElementById('workspace-project-select') as HTMLSelectElement
   setTimeout(() => {
     select.value = p.id
-    const found = projects.find(x => x.id === p.id)
+    const found = projects.find((x: SavedProject) => x.id === p.id)
     if (found) loadProject(found)
   }, 50)
 }

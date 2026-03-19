@@ -8,6 +8,7 @@ export default defineConfig({
         main: 'index.html',
         uploads: 'uploads.html',
         workspace: 'workspace.html',
+        login: 'login.html',
       },
     },
   },

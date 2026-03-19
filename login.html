@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SoundRev — Login</title>
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <div class="nav-bar-head">
+          <a href="/app-sideproj/" class="nav-logo"><h1>SoundRev.</h1></a>
+          <nav class="header-nav">
+            <ul>
+              <li><a href="/app-sideproj/">+ New track</a></li>
+              <li><a href="/app-sideproj/uploads.html">Uploads</a></li>
+              <li><a href="/app-sideproj/workspace.html">Workspace</a></li>
+              <li><a href="/app-sideproj/login.html" class="nav-active">Login</a></li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+
+      <main class="auth-main">
+        <div class="auth-card">
+
+          <!-- Tab toggle -->
+          <div class="auth-tabs">
+            <button id="tab-login" class="auth-tab active">Sign in</button>
+            <button id="tab-signup" class="auth-tab">Sign up</button>
+          </div>
+
+          <!-- Login form -->
+          <div id="form-login" class="auth-form">
+            <div class="auth-field">
+              <label for="login-email">Email</label>
+              <input id="login-email" type="email" placeholder="you@example.com" autocomplete="email" />
+            </div>
+            <div class="auth-field">
+              <label for="login-password">Password</label>
+              <input id="login-password" type="password" placeholder="••••••••" autocomplete="current-password" />
+            </div>
+            <button id="btn-login" class="auth-submit">Sign in</button>
+            <p id="login-error" class="auth-error hidden"></p>
+          </div>
+
+          <!-- Signup form -->
+          <div id="form-signup" class="auth-form hidden">
+            <div class="auth-field">
+              <label for="signup-username">Username</label>
+              <input id="signup-username" type="text" placeholder="yourname" autocomplete="username" />
+            </div>
+            <div class="auth-field">
+              <label for="signup-email">Email</label>
+              <input id="signup-email" type="email" placeholder="you@example.com" autocomplete="email" />
+            </div>
+            <div class="auth-field">
+              <label for="signup-password">Password</label>
+              <input id="signup-password" type="password" placeholder="min 6 characters" autocomplete="new-password" />
+            </div>
+            <button id="btn-signup" class="auth-submit">Create account</button>
+            <p id="signup-error" class="auth-error hidden"></p>
+            <p id="signup-success" class="auth-success hidden">Check your email to confirm your account!</p>
+          </div>
+
+        </div>
+      </main>
+
+      <footer>
+        <p>&copy; 2024 SoundRev. All rights reserved.</p>
+      </footer>
+    </div>
+    <script type="module" src="/src/login-page.ts"></script>
+  </body>
+</html>

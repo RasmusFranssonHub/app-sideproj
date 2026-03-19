@@ -1,0 +1,122 @@
+.auth-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 60px 0;
+  width: 100%;
+}
+
+.auth-card {
+  background: #141414;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 32px;
+  width: 360px;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.auth-tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  color: rgba(255,255,255,0.3);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.75em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 16px 10px;
+  cursor: pointer;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.auth-tab:hover { color: rgba(255,255,255,0.6); border-color: transparent; }
+
+.auth-tab.active {
+  color: rgba(255,255,255,0.85);
+  border-bottom-color: rgba(255,255,255,0.6);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-field label {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.68em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+}
+
+.auth-field input {
+  background: #0d0d0d;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  color: rgba(255,255,255,0.85);
+  font-family: inherit;
+  font-size: 0.9em;
+  padding: 9px 12px;
+  transition: border-color 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.auth-field input:focus {
+  outline: none;
+  border-color: rgba(255,255,255,0.25);
+}
+
+.auth-submit {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  color: rgba(255,255,255,0.8);
+  font-size: 0.88em;
+  font-weight: 600;
+  padding: 0.65em 0;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.15s;
+  width: 100%;
+}
+
+.auth-submit:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: transparent;
+}
+
+.auth-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.auth-error {
+  color: rgba(255,100,100,0.8);
+  font-size: 0.8em;
+  margin: 0;
+  text-align: center;
+}
+
+.auth-success {
+  color: rgba(100,220,100,0.8);
+  font-size: 0.8em;
+  margin: 0;
+  text-align: center;
+}
