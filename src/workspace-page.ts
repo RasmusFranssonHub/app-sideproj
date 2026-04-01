@@ -37,7 +37,7 @@ async function populateProjectSelect() {
 
   try {
     projects = await loadProjects()
-  } catch { /* not logged in */ }
+  } catch {}
 
   select.innerHTML = '<option value="">— select a project —</option>'
   projects.forEach(p => {
@@ -67,13 +67,11 @@ async function loadProject(project: SavedProject) {
   document.getElementById('mini-track-file')!.textContent = project.file_name
   document.getElementById('workspace-meta-file')!.textContent = project.file_name
 
-  // Load comments from Supabase
   try {
     const { comments } = await loadProjectWithComments(project.id)
     document.getElementById('workspace-meta-comments')!.textContent =
       `${comments.length} comment${comments.length !== 1 ? 's' : ''}`
 
-    // Load saved statuses from Supabase comments table
     cards = comments.map(c => ({
       id: c.id,
       seconds: c.seconds,
@@ -93,6 +91,13 @@ async function loadProject(project: SavedProject) {
 
 function clearProject() {
   currentProject = null
+  cards = []
+
+  if (audio) {
+    audio.pause()
+    audio = null
+  }
+
   document.getElementById('workspace-empty')!.classList.remove('hidden')
   document.getElementById('workspace-board')!.classList.add('hidden')
   document.getElementById('workspace-project-meta')!.classList.add('hidden')
@@ -102,6 +107,8 @@ function clearProject() {
 const STATUSES: Status[] = ['todo', 'working', 'review', 'done']
 
 function renderBoard() {
+  if (!currentProject) return
+
   STATUSES.forEach(status => {
     const container = document.getElementById(`cards-${status}`)!
     const countEl = document.getElementById(`count-${status}`)!
@@ -148,11 +155,18 @@ function renderBoard() {
 
       const sel = el.querySelector('.card-status-select') as HTMLSelectElement
       sel.addEventListener('change', async () => {
+        if (!currentProject) return
+
         const idx = cards.findIndex(c => c.id === card.id)
         if (idx !== -1) {
           cards[idx].status = sel.value as Status
-          // Save status to Supabase
-          await supabase.from('comments').update({ status: sel.value }).eq('id', card.id)
+
+          await supabase
+            .from('comments')
+            .update({ status: sel.value })
+            .eq('id', card.id)
+            .eq('project_id', currentProject.id)
+
           renderBoard()
         }
       })
@@ -168,7 +182,6 @@ function setupAudio(project: SavedProject) {
   if (audio) { audio.pause(); audio = null }
   setPlaying(false)
 
-  // Try to load from Supabase Storage
   if (project.audio_path) {
     supabase.storage.from('audio').createSignedUrl(project.audio_path, 3600).then(({ data }: { data: { signedUrl: string } | null }) => {
       if (data?.signedUrl) {
@@ -242,7 +255,6 @@ function bindPlayerControls() {
   })
 }
 
-// ── Init ─────────────────────────────────
 const projects = await populateProjectSelect()
 bindPlayerControls()
 
@@ -257,7 +269,6 @@ if (pending) {
     if (found) loadProject(found)
   }, 50)
 }
-
 
 import { initMobile } from './mobile/mobile'
 initMobile()
