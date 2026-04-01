@@ -1,5 +1,5 @@
 import './styles/main.scss'
-import './styles/mobile.scss'
+import './mobile/mobile.scss'
 import './styles/auth.scss'
 import { signIn, signUp, getUser } from './lib/api'
 
