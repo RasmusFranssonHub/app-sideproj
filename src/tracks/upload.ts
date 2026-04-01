@@ -2,9 +2,8 @@ import { store } from '../state/store'
 import { loadTrack } from '../audio/player'
 import drawWaveform from '../audio/waveform'
 import { rebindAudioEndedState } from '../ui/events'
-import { bindPauseComment } from '../ui/timeline'
-import { renderCommentsList } from '../ui/comments'
-import { renderCommentDots } from '../ui/timeline'
+import { bindPauseComment, renderCommentDots } from '../ui/timeline'
+import * as commentsUi from '../ui/comments'
 import {
   saveCurrentProject,
   loadProjectWithComments,
@@ -12,6 +11,13 @@ import {
   type SavedProject,
 } from '../tracks/projects'
 import { getUser } from '../lib/api'
+
+const renderCommentsList = () => {
+  const fn =
+    (commentsUi as { renderCommentsList?: () => void }).renderCommentsList ??
+    (commentsUi as { renderComments?: () => void }).renderComments
+  if (fn) fn()
+}
 
 export function bindUpload() {
   const input = document.getElementById('upload') as HTMLInputElement
@@ -51,6 +57,7 @@ export function bindUpload() {
     projectNameInput.value = baseName
 
     document.getElementById('player')?.classList.remove('hidden')
+    document.getElementById('bottom-bar')?.classList.remove('hidden')
     document.getElementById('play-pause')?.classList.add('is-playing')
     renderCommentsList()
     renderCommentDots()

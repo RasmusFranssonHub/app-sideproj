@@ -8,6 +8,7 @@
   </head>
   <body>
     <div id="app">
+
       <header>
         <div class="nav-bar-head">
           <a href="/app-sideproj/" class="nav-logo"><h1>SoundRev.</h1></a>
@@ -22,325 +23,222 @@
         </div>
       </header>
 
-    <main>
+      <main>
 
-      <!-- UPLOAD -->
-      <section class="player-style">
-        <label for="upload">Upload your audio file:</label>
-        <input type="file" id="upload" accept="audio/*" />
-      </section>
+        <!-- UPLOAD -->
+        <section class="player-style">
+          <label for="upload">Upload your audio file:</label>
+          <input type="file" id="upload" accept="audio/*" />
+        </section>
 
-      <section id="player" class="hidden">
+        <!-- PLAYER -->
+        <section id="player" class="hidden">
 
-        <!-- All pieces stack as siblings inside player-block -->
-        <div class="player-block">
+          <!-- Project name -->
+          <div id="project-name" class="project-name hidden">
+            <div class="project-name-row">
+              <input id="project-name-input" class="project-name-input" type="text" placeholder="Project name" spellcheck="false" />
+              <button class="project-name-edit-btn" id="project-name-edit" aria-label="Edit name">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
 
-          <!-- 1. TOP CARD: name + waveform + transport -->
-          <div class="player-card">
+          <!-- Player card -->
+          <div class="player-block">
+            <div class="player-card">
 
-            <button id="delete-project-btn" class="delete-project-btn" title="Delete project">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"/>
-                <line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </button>
+              <div class="timeline-row">
+                <div class="time-display"><span id="current-time">0:00</span></div>
+                <div class="timeline-wrapper">
+                  <div id="timeline">
+                    <canvas id="waveform" width="800" height="100"></canvas>
+                    <canvas id="playhead" width="800" height="100"></canvas>
+                    <div id="playhead-handle"></div>
+                  </div>
+                  <div id="timeline-dots" class="timeline-dots"></div>
+                </div>
+                <div class="time-display"><span id="duration">0:00</span></div>
+              </div>
 
-            <!-- Project name + edit button -->
-
-            <div id="project-name" class="project-name hidden">
-              <div class="project-name-row">
-                <input id="project-name-input" class="project-name-input" type="text" placeholder="PROJECT NAME" spellcheck="false" />
-                <button id="project-name-edit" class="project-name-edit-btn" title="Rename">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                  </svg>
+              <div class="transport">
+                <button id="rewind" class="transport-btn" aria-label="Rewind">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="4" x2="5" y2="20"/></svg>
+                </button>
+                <button id="play-pause" class="transport-btn play-pause-btn" aria-label="Play / Pause">
+                  <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                </button>
+                <button id="fast-forward" class="transport-btn" aria-label="Fast forward">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="4" x2="19" y2="20"/></svg>
                 </button>
               </div>
-            </div>
 
-            <div class="timeline-row">
-              <span id="current-time" class="time-display">0:00</span>
-            
-              <div class="timeline-wrapper">
-                <!-- Waveform canvas + playhead (overflow:hidden clips here) -->
-                <div id="timeline">
-                  <canvas id="waveform" width="1200" height="96"></canvas>
-                  <div id="playhead-handle"></div>
-                </div>
-                <!-- Dots sit OUTSIDE #timeline so they are never clipped -->
-                <div id="timeline-dots" class="timeline-dots"></div>
+              <div class="playback-speed-control">
+                <label for="playback-speed">Speed:</label>
+                <select id="playback-speed">
+                  <option value="0.5">0.5x</option>
+                  <option value="0.75">0.75x</option>
+                  <option value="1" selected>1x</option>
+                  <option value="1.25">1.25x</option>
+                  <option value="1.5">1.5x</option>
+                  <option value="2">2x</option>
+                </select>
               </div>
-            
-              <span id="duration" class="time-display">0:00</span>
-            </div>
 
-            <div class="transport">
-              <button id="rewind" class="transport-btn" title="Restart">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polygon points="19 20 9 12 19 4 19 20"/>
-                  <line x1="5" y1="4" x2="5" y2="20"/>
-                </svg>
-              </button>
-              <button id="play-pause" class="transport-btn play-pause-btn" title="Play / Pause">
-                <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor">
-                  <rect x="6" y="4" width="4" height="16"/>
-                  <rect x="14" y="4" width="4" height="16"/>
-                </svg>
-              </button>
-              <button id="fast-forward" class="transport-btn" title="End">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polygon points="5 4 15 12 5 20 5 4"/>
-                  <line x1="19" y1="4" x2="19" y2="20"/>
-                </svg>
-              </button>
-            </div>
-
-          </div><!-- /.player-card -->
-
-          <!-- 2. COMMENT SECTION: button + popup as one block -->
-          <div class="comment-section">
-
-            <button id="comment-btn" class="comment-trigger-btn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-              </svg>
-              <span id="comment-btn-label">Comment</span>
-            </button>
-
-            <div id="comment-popup" class="comment-popup">
-              <div class="comment-popup-header">
-                <span id="comment-popup-title">Add comment</span>
-                <div class="comment-timestamp-row">
-                  <label for="comment-timestamp">Timestamp</label>
-                  <input id="comment-timestamp" class="comment-timestamp-input" type="text" value="0:00" spellcheck="false" />
+              <!-- Comment creator -->
+              <div class="comment-section">
+                <button class="comment-trigger-btn" id="comment-btn" aria-label="Add comment">
+                  Comment
+                  <svg class="trigger-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+                <div class="comment-popup" id="comment-popup">
+                  <div class="comment-popup-header">
+                    <span>Add comment</span>
+                    <input class="comment-timestamp-input" id="comment-timestamp" type="text" value="0:00" />
+                  </div>
+                  <textarea id="comment-text" placeholder="Write your comment..."></textarea>
+                  <div class="comment-popup-footer">
+                    <div class="comment-options">
+                      <label for="comment-type">Type:</label>
+                      <select id="comment-type">
+                        <option value="general">General</option>
+                        <option value="mix">Mix</option>
+                        <option value="timing">Timing</option>
+                        <option value="arrangement">Arrangement</option>
+                      </select>
+                      <div class="color-picker-row" id="color-picker-row"></div>
+                    </div>
+                    <div class="comment-popup-actions">
+                      <button id="comment-cancel" class="btn-cancel">Cancel</button>
+                      <button id="save-comment" class="btn-save">Save</button>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <textarea id="comment-text" placeholder="Write your comment..."></textarea>
-              <div class="comment-popup-footer">
-                <div class="comment-options">
-                  <label for="comment-type">Type</label>
-                  <select id="comment-type">
-                    <option value="general">General</option>
-                    <option value="mix">Mix</option>
-                    <option value="timing">Timing</option>
-                    <option value="arrangement">Arrangement</option>
-                  </select>
-                  <!-- Pastel color swatches — replaces <input type="color"> -->
-                  <div id="comment-color-picker" class="color-picker-row"></div>
-                </div>
-                <div class="comment-popup-actions">
-                  <button id="comment-delete" class="btn-delete">Delete</button>
-                  <button id="comment-cancel" class="btn-cancel">Cancel</button>
-                  <button id="save-comment" class="btn-save">Save</button>
-                </div>
-              </div>
+
             </div>
+          </div>
 
-          </div><!-- /.comment-section -->
-
-          <!-- 3. COMMENTS LIST -->
+          <!-- Comments panel — separate card -->
           <div id="comments-panel" class="hidden">
-            <ul id="comments-list"></ul>
-          </div>
-        <!-- /.action-bar-wrapper -->
-
-        <!-- Replace .action-bar-wrapper in index.html with this -->
-        <!-- Also REMOVE the delete-project-btn button from .player-card -->
-
-        <div class="action-bar-wrapper">
-          <div class="action-bar-frame">
-            <button id="action-save" class="action-btn action-btn-primary">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                <polyline points="17 21 17 13 7 13 7 21"/>
-                <polyline points="7 3 7 8 15 8"/>
-              </svg>
-              Save project
-            </button>
-            <div class="action-bar-divider"></div>
-            <button id="action-delete" class="action-btn action-btn-danger">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"/>
-                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                <path d="M10 11v6"/><path d="M14 11v6"/>
-                <path d="M9 6V4h6v2"/>
-              </svg>
-              Delete project
-            </button>
-          </div>
-        </div>
-
-        <!-- SAVE POPUP — replace existing save-popup if any -->
-        <div id="save-popup" class="save-popup hidden">
-          <div class="save-popup-backdrop"></div>
-          <div class="save-popup-card">
-            <button id="save-popup-close" class="save-popup-close" aria-label="Close">✕</button>
-            <h2 class="save-popup-title">Save project</h2>
-            <p class="save-popup-subtitle">Choose what to do next</p>
-
-            <button id="save-popup-uploads" class="save-popup-option">
-              <div class="save-popup-option-icon">
+            <div class="comments-panel-header" id="comments-panel-header">
+              <span class="comments-panel-title">
+                Comments
+                <span class="comments-panel-count" id="comments-count">0</span>
+              </span>
+              <button class="comments-panel-toggle" id="comments-panel-toggle" aria-label="Toggle comments">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                  <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+                  <polyline points="18 15 12 9 6 15"/>
                 </svg>
-              </div>
-              <div class="save-popup-option-text">
-                <span class="save-popup-option-title">Save to uploads</span>
-                <span class="save-popup-option-desc">Store in your account for later</span>
-              </div>
-              <svg class="save-popup-option-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-            </button>
+              </button>
+            </div>
+            <div id="comments-list-wrapper">
+              <ul id="comments-list"></ul>
+            </div>
+          </div>
 
-            <button id="save-popup-share" class="save-popup-option">
-              <div class="save-popup-option-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-                </svg>
+          <!-- Action bar — desktop: below comments -->
+          <div class="action-bar-wrapper" id="action-bar">
+            <div class="action-bar-frame">
+              <button id="action-delete" class="action-btn action-btn--delete">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                Delete project
+              </button>
+              <button id="action-save" class="action-btn action-btn--save">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Save project
+              </button>
+            </div>
+          </div>
+
+        </section>
+
+      </main>
+
+      <!-- SAVE POPUP -->
+      <div id="save-popup" class="fullscreen-popup hidden">
+        <div class="fullscreen-popup-backdrop"></div>
+        <div class="fullscreen-popup-sheet">
+          <div class="fullscreen-popup-handle"></div>
+          <button id="save-popup-close" class="fullscreen-popup-close" aria-label="Close">✕</button>
+          <h2 class="fullscreen-popup-title">Save project</h2>
+          <p class="fullscreen-popup-sub">Choose what to do next</p>
+          <div class="fullscreen-popup-options">
+            <button id="save-popup-uploads" class="popup-option">
+              <div class="popup-option-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
               </div>
-              <div class="save-popup-option-text">
-                <span class="save-popup-option-title">Share project</span>
-                <span class="save-popup-option-desc">Send to a collaborator</span>
+              <div class="popup-option-text">
+                <span class="popup-option-title">Save to uploads</span>
+                <span class="popup-option-desc">Store in your account</span>
               </div>
-              <svg class="save-popup-option-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+              <svg class="popup-option-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button id="save-popup-share" class="popup-option">
+              <div class="popup-option-icon popup-option-icon--share">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              </div>
+              <div class="popup-option-text">
+                <span class="popup-option-title">Share project</span>
+                <span class="popup-option-desc">Send to a collaborator</span>
+              </div>
+              <svg class="popup-option-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
           </div>
-        </div>
-
-        <!-- SHARE POPUP -->
-        <div id="share-popup" class="save-popup hidden">
-          <div class="save-popup-backdrop"></div>
-          <div class="save-popup-card">
-            <button id="share-popup-close" class="save-popup-close" aria-label="Close">✕</button>
-            <h2 class="save-popup-title">Share project</h2>
-            <p class="save-popup-subtitle">Send your commented track</p>
-
-            <button id="share-email" class="save-popup-option">
-              <div class="save-popup-option-icon share-icon-email">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                  <polyline points="22,6 12,13 2,6"/>
-                </svg>
-              </div>
-              <div class="save-popup-option-text">
-                <span class="save-popup-option-title">Send as email</span>
-                <span class="save-popup-option-desc">Open in mail app</span>
-              </div>
-            </button>
-
-            <button id="share-sms" class="save-popup-option">
-              <div class="save-popup-option-icon share-icon-sms">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
-              </div>
-              <div class="save-popup-option-text">
-                <span class="save-popup-option-title">Send as SMS</span>
-                <span class="save-popup-option-desc">Open in messages app</span>
-              </div>
-            </button>
-
-            <button id="share-messenger" class="save-popup-option">
-              <div class="save-popup-option-icon share-icon-messenger">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-                </svg>
-              </div>
-              <div class="save-popup-option-text">
-                <span class="save-popup-option-title">Send via Messenger</span>
-                <span class="save-popup-option-desc">Share on Facebook Messenger</span>
-              </div>
-            </button>
-
-            <button id="share-copy" class="save-popup-option">
-              <div class="save-popup-option-icon share-icon-copy">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                </svg>
-              </div>
-              <div class="save-popup-option-text">
-                <span class="save-popup-option-title">Copy link</span>
-                <span class="save-popup-option-desc">Copy download link to clipboard</span>
-              </div>
-            </button>
-
-            <button id="share-download" class="save-popup-option share-option-download">
-              <div class="save-popup-option-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-                </svg>
-              </div>
-              <div class="save-popup-option-text">
-                <span class="save-popup-option-title">Download file</span>
-                <span class="save-popup-option-desc">Save .soundrev.json to device</span>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        <!-- DELETE POPUP — replaces old delete-modal -->
-        <div id="delete-popup" class="save-popup hidden">
-          <div class="save-popup-backdrop"></div>
-          <div class="save-popup-card save-popup-card--danger">
-            <button id="delete-popup-close" class="save-popup-close" aria-label="Close">✕</button>
-            <h2 class="save-popup-title">Delete project?</h2>
-            <p class="save-popup-subtitle">This cannot be undone</p>
-
-            <button id="delete-popup-save-first" class="save-popup-option">
-              <div class="save-popup-option-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                  <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
-                </svg>
-              </div>
-              <div class="save-popup-option-text">
-                <span class="save-popup-option-title">Save first, then delete</span>
-                <span class="save-popup-option-desc">Export a backup before removing</span>
-              </div>
-              <svg class="save-popup-option-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-            </button>
-
-            <button id="delete-popup-confirm" class="save-popup-option save-popup-option--danger">
-              <div class="save-popup-option-icon save-popup-option-icon--danger">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="3 6 5 6 21 6"/>
-                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                </svg>
-              </div>
-              <div class="save-popup-option-text">
-                <span class="save-popup-option-title">Delete project</span>
-                <span class="save-popup-option-desc">Remove permanently</span>
-              </div>
-            </button>
-          </div>
-        </div>
-      </section>
-
-    </main>
-
-    <!-- DELETE MODAL -->
-    <div id="delete-modal" class="modal-overlay hidden">
-      <div class="modal">
-        <p class="modal-text">Are you sure you want to delete this project?</p>
-        <div class="modal-actions">
-          <button id="modal-save" class="btn-save">Save project</button>
-          <button id="modal-confirm-delete" class="btn-delete">Delete</button>
-          <button id="modal-cancel" class="btn-cancel">Cancel</button>
         </div>
       </div>
-    </div>
 
-    <footer>
-      <p>&copy; 2024 SoundRev. All rights reserved.</p>
-    </footer>
-    </div>
+      <!-- SHARE POPUP -->
+      <div id="share-popup" class="fullscreen-popup hidden">
+        <div class="fullscreen-popup-backdrop"></div>
+        <div class="fullscreen-popup-sheet">
+          <div class="fullscreen-popup-handle"></div>
+          <button id="share-popup-close" class="fullscreen-popup-close" aria-label="Close">✕</button>
+          <h2 class="fullscreen-popup-title">Share project</h2>
+          <p class="fullscreen-popup-sub">Send your commented track</p>
+          <div class="fullscreen-popup-options" id="share-options"></div>
+        </div>
+      </div>
 
+      <!-- DELETE POPUP -->
+      <div id="delete-popup" class="fullscreen-popup hidden">
+        <div class="fullscreen-popup-backdrop"></div>
+        <div class="fullscreen-popup-sheet">
+          <div class="fullscreen-popup-handle"></div>
+          <button id="delete-popup-close" class="fullscreen-popup-close" aria-label="Close">✕</button>
+          <h2 class="fullscreen-popup-title fullscreen-popup-title--danger">Delete project?</h2>
+          <p class="fullscreen-popup-sub">This cannot be undone</p>
+          <div class="fullscreen-popup-options">
+            <button id="delete-popup-save-first" class="popup-option">
+              <div class="popup-option-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              </div>
+              <div class="popup-option-text">
+                <span class="popup-option-title">Save first, then delete</span>
+                <span class="popup-option-desc">Export a backup before removing</span>
+              </div>
+              <svg class="popup-option-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button id="delete-popup-confirm" class="popup-option popup-option--danger">
+              <div class="popup-option-icon popup-option-icon--danger">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+              </div>
+              <div class="popup-option-text">
+                <span class="popup-option-title">Delete permanently</span>
+                <span class="popup-option-desc">Remove project and all comments</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

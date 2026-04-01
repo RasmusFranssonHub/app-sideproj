@@ -2,7 +2,6 @@ import { store } from '../state/store'
 import { showCommentPopup } from './comments'
 import { seekToSecond } from '../audio/player'
 import { renderWaveform } from '../audio/waveform'
-import { renderCommentsList } from './comments'
 
 function formatTime(s: number): string {
   const m = Math.floor(s / 60)
@@ -10,11 +9,7 @@ function formatTime(s: number): string {
   return `${m}:${sec.toString().padStart(2, '0')}`
 }
 
-// ─────────────────────────────────────────
-// TICK — only updates waveform + playhead
-// Dots are NOT redrawn every frame
-// ─────────────────────────────────────────
-
+// ── TICK ──────────────────────────────────
 function tick() {
   if (store.audio && !store.audio.paused) {
     store.currentTime = store.audio.currentTime
@@ -28,17 +23,18 @@ function tick() {
     const progress = store.currentTime / store.duration
     renderWaveform(canvas, progress)
     if (handle) handle.style.left = `${progress * 100}%`
+
+    const ct = document.getElementById('current-time')
+    const dur = document.getElementById('duration')
+    if (ct) ct.textContent = formatTime(store.currentTime)
+    if (dur) dur.textContent = formatTime(store.duration)
   }
 
   requestAnimationFrame(tick)
 }
-
 tick()
 
-// ─────────────────────────────────────────
-// COMMENT DOTS — rendered once, updated on change
-// ─────────────────────────────────────────
-
+// ── DOTS ──────────────────────────────────
 let isDraggingDot = false
 
 export function renderCommentDots() {
@@ -51,16 +47,21 @@ export function renderCommentDots() {
   const sorted = [...store.comments].sort((a, b) => a.seconds[0] - b.seconds[0])
 
   sorted.forEach((comment, i) => {
-    if (comment.seconds.length === 0) return
+    if (!comment.seconds.length) return
+
+    const pct = (comment.seconds[0] / store.duration) * 100
 
     const dot = document.createElement('div')
     dot.className = 'comment-dot'
-    dot.style.left = `${(comment.seconds[0] / store.duration) * 100}%`
+    // Position dot using % of timeline width, not dots container width
+    dot.style.left = `${pct}%`
     dot.style.setProperty('--dot-color', comment.color)
+
     dot.innerHTML = `
       <div class="comment-dot-bubble">
         <span class="comment-dot-time">${formatTime(comment.seconds[0])}</span>
       </div>
+      <div class="comment-dot-arrow"></div>
       <div class="comment-dot-circle">${i + 1}</div>
     `
 
@@ -88,28 +89,46 @@ export function renderCommentDots() {
         window.removeEventListener('mousemove', onMove)
         window.removeEventListener('mouseup', onUp)
         renderCommentDots()
-        renderCommentsList()
+        document.dispatchEvent(new CustomEvent('soundrev:commentschanged'))
       }
 
       window.addEventListener('mousemove', onMove)
       window.addEventListener('mouseup', onUp)
     })
 
+    // Touch drag support
+    circle.addEventListener('touchstart', (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      isDraggingDot = true
+
+      const onMove = (ev: TouchEvent) => {
+        const touch = ev.touches[0]
+        const rect = timeline.getBoundingClientRect()
+        const x = Math.max(0, Math.min(touch.clientX - rect.left, rect.width))
+        const newTime = (x / rect.width) * store.duration
+        comment.seconds[0] = Math.floor(newTime)
+        dot.style.left = `${(newTime / store.duration) * 100}%`
+        timeLabel.textContent = formatTime(newTime)
+      }
+
+      const onUp = () => {
+        isDraggingDot = false
+        window.removeEventListener('touchmove', onMove)
+        window.removeEventListener('touchend', onUp)
+        renderCommentDots()
+        document.dispatchEvent(new CustomEvent('soundrev:commentschanged'))
+      }
+
+      window.addEventListener('touchmove', onMove, { passive: false })
+      window.addEventListener('touchend', onUp)
+    }, { passive: false })
+
     dotsContainer.appendChild(dot)
   })
 }
 
-// ─────────────────────────────────────────
-// CLICK ON WAVEFORM
-// ─────────────────────────────────────────
-
-function getSecondFromMouse(e: MouseEvent, canvas: HTMLCanvasElement): number | null {
-  if (!store.duration) return null
-  const rect = canvas.getBoundingClientRect()
-  const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width))
-  return (x / rect.width) * store.duration
-}
-
+// ── CLICK = seek + popup ──────────────────
 let isDragging = false
 
 export function bindSecondClick() {
@@ -118,8 +137,10 @@ export function bindSecondClick() {
 
   canvas.addEventListener('click', (e) => {
     if (isDragging || isDraggingDot) return
-    const second = getSecondFromMouse(e, canvas)
-    if (second === null) return
+    if (!store.duration) return
+    const rect = canvas.getBoundingClientRect()
+    const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width))
+    const second = (x / rect.width) * store.duration
     seekToSecond(second)
     store.selectedSeconds.clear()
     store.selectedSeconds.add(Math.floor(second))
@@ -131,8 +152,6 @@ export function bindPauseComment() {
   store.audio?.addEventListener('pause', () => {
     if (!store.audio || store.audio.ended) return
     const t = store.audio.currentTime
-    store.selectedSeconds.clear()
-    store.selectedSeconds.add(Math.floor(t))
     showCommentPopup(t)
   })
 }
