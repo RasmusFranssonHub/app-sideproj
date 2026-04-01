@@ -1,4 +1,5 @@
 import './styles/main.scss'
+import './styles/mobile.scss'
 import './styles/auth.scss'
 import { signIn, signUp, getUser } from './lib/api'
 
@@ -85,3 +86,7 @@ document.addEventListener('keydown', (e) => {
     document.getElementById('btn-signup')!.click()
   }
 })
+
+
+import { initMobile } from './mobile/mobile'
+initMobile()

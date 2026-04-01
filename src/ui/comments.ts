@@ -190,48 +190,129 @@ export function bindCommentPopup() {
   })
 
   // Action bar
-  document.getElementById('action-save')?.addEventListener('click', async () => {
+  // ── Save popup ──────────────────────────
+  function openPopup(id: string) {
+    document.getElementById(id)?.classList.remove('hidden')
+    document.body.style.overflow = 'hidden'
+  }
+  function closePopup(id: string) {
+    document.getElementById(id)?.classList.add('hidden')
+    document.body.style.overflow = ''
+  }
+
+  document.getElementById('action-save')?.addEventListener('click', () => openPopup('save-popup'))
+
+  document.getElementById('save-popup-close')?.addEventListener('click', () => closePopup('save-popup'))
+  document.getElementById('save-popup')?.querySelector('.save-popup-backdrop')
+    ?.addEventListener('click', () => closePopup('save-popup'))
+
+  // Save to uploads
+  document.getElementById('save-popup-uploads')?.addEventListener('click', async () => {
     const name = (document.getElementById('project-name-input') as HTMLInputElement)?.value || 'Untitled'
     const { getUser } = await import('../lib/api')
     const user = await getUser()
-    if (!user) {
-      window.location.href = '/app-sideproj/login.html'
-      return
-    }
+    closePopup('save-popup')
+    if (!user) { window.location.href = '/app-sideproj/login.html'; return }
     try {
       await saveCurrentProject(name)
       showFeedback('action-save', 'Saved ✓')
-    } catch (e) {
-      showFeedback('action-save', 'Error saving')
-    }
+    } catch { showFeedback('action-save', 'Error') }
   })
 
-  document.getElementById('action-workspace')?.addEventListener('click', () => {
+  // Save → Share opens share popup
+  document.getElementById('save-popup-share')?.addEventListener('click', async () => {
     const name = (document.getElementById('project-name-input') as HTMLInputElement)?.value || 'Untitled'
-    saveCurrentProject(name)
-    window.location.href = '/app-sideproj/workspace.html'
-  })
-
-  document.getElementById('action-share')?.addEventListener('click', async () => {
-    const name = (document.getElementById('project-name-input') as HTMLInputElement)?.value || 'Untitled'
+    closePopup('save-popup')
+    // Generate share blob URL
     const { getUser } = await import('../lib/api')
     const user = await getUser()
+    let blob: Blob
     if (user) {
-      const project = await saveCurrentProject(name)
-      exportProjectJson(project)
+      try {
+        const project = await saveCurrentProject(name)
+        blob = new Blob([JSON.stringify(project, null, 2)], { type: 'application/json' })
+      } catch {
+        blob = buildLocalBlob(name)
+      }
     } else {
-      // Export without saving if not logged in
-      exportProjectJson({
-        id: '',
-        name,
-        file_name: store.currentTrack?.fileName ?? '',
-        duration: store.duration,
-        audio_path: null,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
+      blob = buildLocalBlob(name)
     }
-    showFeedback('action-share', 'Downloaded ✓')
+    const blobUrl = URL.createObjectURL(blob)
+    ;(window as any)._shareUrl = blobUrl
+    openPopup('share-popup')
+  })
+
+  // ── Share popup ──────────────────────────
+  document.getElementById('share-popup-close')?.addEventListener('click', () => closePopup('share-popup'))
+  document.getElementById('share-popup')?.querySelector('.save-popup-backdrop')
+    ?.addEventListener('click', () => closePopup('share-popup'))
+
+  document.getElementById('share-email')?.addEventListener('click', () => {
+    const name = (document.getElementById('project-name-input') as HTMLInputElement)?.value || 'Project'
+    const url = (window as any)._shareUrl || ''
+    window.open(`mailto:?subject=${encodeURIComponent(name + ' — SoundRev')}&body=${encodeURIComponent('Check out my SoundRev project: ' + url)}`)
+    closePopup('share-popup')
+  })
+
+  document.getElementById('share-sms')?.addEventListener('click', () => {
+    const url = (window as any)._shareUrl || ''
+    window.open(`sms:?body=${encodeURIComponent('Check out my SoundRev project: ' + url)}`)
+    closePopup('share-popup')
+  })
+
+  document.getElementById('share-messenger')?.addEventListener('click', () => {
+    const url = (window as any)._shareUrl || ''
+    window.open(`fb-messenger://share?link=${encodeURIComponent(url)}`)
+    closePopup('share-popup')
+  })
+
+  document.getElementById('share-copy')?.addEventListener('click', async () => {
+    const url = (window as any)._shareUrl || window.location.href
+    await navigator.clipboard.writeText(url)
+    const btn = document.getElementById('share-copy')
+    if (btn) {
+      const t = btn.querySelector('.save-popup-option-title') as HTMLElement
+      const orig = t.textContent
+      t.textContent = 'Copied! ✓'
+      setTimeout(() => { t.textContent = orig }, 2000)
+    }
+  })
+
+  document.getElementById('share-download')?.addEventListener('click', () => {
+    const name = (document.getElementById('project-name-input') as HTMLInputElement)?.value || 'project'
+    const url = (window as any)._shareUrl || ''
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${name}.soundrev.json`
+    a.click()
+    closePopup('share-popup')
+  })
+
+  // ── Delete popup ──────────────────────────
+  document.getElementById('action-delete')?.addEventListener('click', () => openPopup('delete-popup'))
+
+  document.getElementById('delete-popup-close')?.addEventListener('click', () => closePopup('delete-popup'))
+  document.getElementById('delete-popup')?.querySelector('.save-popup-backdrop')
+    ?.addEventListener('click', () => closePopup('delete-popup'))
+
+  document.getElementById('delete-popup-save-first')?.addEventListener('click', () => {
+    closePopup('delete-popup')
+    openPopup('save-popup')
+  })
+
+  document.getElementById('delete-popup-confirm')?.addEventListener('click', () => {
+    closePopup('delete-popup')
+    store.comments = []
+    store.currentTrack = null
+    store.duration = 0
+    store.currentTime = 0
+    store.currentSecond = 0
+    store.currentProjectId = null
+    if (store.audio) { store.audio.pause(); store.audio = null }
+    document.getElementById('player')?.classList.add('hidden')
+    document.getElementById('project-name')?.classList.add('hidden')
+    document.querySelector('.player-style')?.classList.remove('hidden')
+    renderCommentsList()
   })
 
   document.getElementById('project-name-edit')?.addEventListener('click', () => {
@@ -311,4 +392,15 @@ export function renderCommentsList() {
     })
     list.appendChild(li)
   })
+}
+
+export function buildLocalBlob(name: string): Blob {
+  const project = {
+    name,
+    comments: store.comments,
+    currentTrack: store.currentTrack,
+    duration: store.duration,
+    createdAt: Date.now(),
+  }
+  return new Blob([JSON.stringify(project, null, 2)], { type: 'application/json' })
 }

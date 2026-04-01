@@ -766,3 +766,192 @@
   color: rgba(255,200,50,0.7);
   border-color: transparent;
 }
+
+/* ══════════════════════════════════════════
+   SAVE POPUP — fullscreen overlay
+══════════════════════════════════════════ */
+
+.save-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.save-popup.hidden {
+  display: none !important;
+}
+
+.save-popup-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(2px);
+}
+
+.save-popup-card {
+  position: relative;
+  background: #181818;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px 20px 0 0;
+  padding: 28px 24px 48px;
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: slide-up 0.25s ease;
+}
+
+@keyframes slide-up {
+  from { transform: translateY(40px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.save-popup-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255,255,255,0.07);
+  border: none;
+  border-radius: 50%;
+  color: rgba(255,255,255,0.4);
+  width: 32px;
+  height: 32px;
+  font-size: 0.8em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.save-popup-close:hover {
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.8);
+  border-color: transparent;
+}
+
+.save-popup-title {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  margin: 0 0 2px;
+}
+
+.save-popup-subtitle {
+  font-size: 0.8em;
+  color: rgba(255,255,255,0.3);
+  margin: 0 0 8px;
+}
+
+.save-popup-option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #111;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s;
+  width: 100%;
+}
+
+.save-popup-option:hover {
+  background: #1a1a1a;
+  border-color: rgba(255,255,255,0.14);
+}
+
+.save-popup-option-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: rgba(255,255,255,0.5);
+}
+
+.save-popup-option-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.save-popup-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.save-popup-option-title {
+  font-size: 0.9em;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+}
+
+.save-popup-option-desc {
+  font-size: 0.75em;
+  color: rgba(255,255,255,0.3);
+}
+
+.save-popup-option-arrow {
+  width: 16px;
+  height: 16px;
+  color: rgba(255,255,255,0.2);
+  flex-shrink: 0;
+}
+
+/* ── Hide footer everywhere ── */
+footer { display: none !important; }
+
+/* ── Action bar danger button ── */
+.action-btn-danger {
+  color: rgba(255,100,100,0.5);
+}
+.action-btn-danger:hover {
+  color: rgba(255,100,100,0.8);
+  background: rgba(255,50,50,0.05);
+}
+
+/* ── Action bar — no header text ── */
+.action-bar-header { display: none; }
+.action-bar-wrapper {
+  padding-top: 28px;
+}
+
+/* ── Share icon colors ── */
+.share-icon-email    { background: rgba(59,130,246,0.12) !important; color: #60a5fa !important; }
+.share-icon-sms      { background: rgba(34,197,94,0.12) !important;  color: #4ade80 !important; }
+.share-icon-messenger{ background: rgba(139,92,246,0.12) !important; color: #a78bfa !important; }
+.share-icon-copy     { background: rgba(255,255,255,0.06) !important; }
+
+/* ── Delete popup danger styling ── */
+.save-popup-card--danger .save-popup-title { color: rgba(255,100,100,0.9); }
+
+.save-popup-option--danger {
+  border-color: rgba(255,80,80,0.2) !important;
+}
+.save-popup-option--danger:hover {
+  background: rgba(255,50,50,0.06) !important;
+  border-color: rgba(255,80,80,0.35) !important;
+}
+.save-popup-option--danger .save-popup-option-title { color: rgba(255,100,100,0.8) !important; }
+
+.save-popup-option-icon--danger {
+  background: rgba(255,80,80,0.1) !important;
+  color: rgba(255,100,100,0.7) !important;
+}
+
+/* ── Share download option ── */
+.share-option-download {
+  margin-top: 4px;
+  border-style: dashed !important;
+}

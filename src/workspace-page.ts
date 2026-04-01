@@ -1,4 +1,5 @@
 import './styles/main.scss'
+import './styles/mobile.scss'
 import './styles/workspace.scss'
 import { requireAuth, updateNav } from './lib/auth-guard'
 import { loadProjects, loadProjectWithComments, type SavedProject } from './tracks/projects'
@@ -169,7 +170,7 @@ function setupAudio(project: SavedProject) {
 
   // Try to load from Supabase Storage
   if (project.audio_path) {
-    supabase.storage.from('audio').createSignedUrl(project.audio_path, 3600).then(({ data }) => {
+    supabase.storage.from('audio').createSignedUrl(project.audio_path, 3600).then(({ data }: { data: { signedUrl: string } | null }) => {
       if (data?.signedUrl) {
         audio = new Audio(data.signedUrl)
         bindAudioEvents()
@@ -256,3 +257,7 @@ if (pending) {
     if (found) loadProject(found)
   }, 50)
 }
+
+
+import { initMobile } from './mobile/mobile'
+initMobile()

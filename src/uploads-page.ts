@@ -1,4 +1,5 @@
 import './styles/main.scss'
+import './styles/mobile.scss'
 import './styles/uploads.scss'
 import { requireAuth, updateNav } from './lib/auth-guard'
 import {
@@ -199,3 +200,7 @@ document.getElementById('project-view-back')?.addEventListener('click', () => {
 })
 
 renderList()
+
+
+import { initMobile } from './mobile/mobile'
+initMobile()

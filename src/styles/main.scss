@@ -28,7 +28,7 @@ body {
   display: flex;
   flex-direction: column;
   place-items: center;
-  min-width: 1200px;
+  min-width: 320px;
   min-height: 100vh;
 }
 
@@ -44,11 +44,5 @@ button {
   transition: border-color 0.25s;
 }
 
-button:hover {
-  border-color: rgba(255, 255, 255, 0.87);
-}
-
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
+button:hover { border-color: rgba(255, 255, 255, 0.87); }
+button:focus, button:focus-visible { outline: 4px auto -webkit-focus-ring-color; }
