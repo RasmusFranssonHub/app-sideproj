@@ -1,5 +1,5 @@
 import './styles/main.scss'
-import './styles/mobile.scss'
+import './mobile/mobile.scss'
 import './styles/workspace.scss'
 import { requireAuth, updateNav } from './lib/auth-guard'
 import { loadProjects, loadProjectWithComments, type SavedProject } from './tracks/projects'
