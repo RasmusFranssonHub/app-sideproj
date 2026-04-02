@@ -49,13 +49,10 @@ export function renderCommentDots() {
   sorted.forEach((comment, i) => {
     if (!comment.seconds.length) return
 
-    const pct = (comment.seconds[0] / store.duration) * 100
-
     const dot = document.createElement('div')
     dot.className = 'comment-dot'
-    // Position dot using % of timeline width, not dots container width
-    dot.style.left = `${pct}%`
     dot.style.setProperty('--dot-color', comment.color)
+    updateDotPosition(dot, comment.seconds[0], timeline)
 
     dot.innerHTML = `
       <div class="comment-dot-bubble">
@@ -68,6 +65,7 @@ export function renderCommentDots() {
     const circle = dot.querySelector('.comment-dot-circle') as HTMLElement
     const timeLabel = dot.querySelector('.comment-dot-time') as HTMLElement
 
+    // Mouse drag
     circle.addEventListener('mousedown', (e) => {
       e.preventDefault()
       e.stopPropagation()
@@ -79,7 +77,7 @@ export function renderCommentDots() {
         const x = Math.max(0, Math.min(ev.clientX - rect.left, rect.width))
         const newTime = (x / rect.width) * store.duration
         comment.seconds[0] = Math.floor(newTime)
-        dot.style.left = `${(newTime / store.duration) * 100}%`
+        updateDotPosition(dot, newTime, timeline)
         timeLabel.textContent = formatTime(newTime)
       }
 
@@ -96,7 +94,7 @@ export function renderCommentDots() {
       window.addEventListener('mouseup', onUp)
     })
 
-    // Touch drag support
+    // Touch drag
     circle.addEventListener('touchstart', (e) => {
       e.preventDefault()
       e.stopPropagation()
@@ -108,7 +106,7 @@ export function renderCommentDots() {
         const x = Math.max(0, Math.min(touch.clientX - rect.left, rect.width))
         const newTime = (x / rect.width) * store.duration
         comment.seconds[0] = Math.floor(newTime)
-        dot.style.left = `${(newTime / store.duration) * 100}%`
+        updateDotPosition(dot, newTime, timeline)
         timeLabel.textContent = formatTime(newTime)
       }
 
@@ -128,7 +126,22 @@ export function renderCommentDots() {
   })
 }
 
-// ── CLICK = seek + popup ──────────────────
+// Position dot using timeline's actual pixel width
+// so dots always align with the waveform regardless of zoom/scroll
+function updateDotPosition(dot: HTMLElement, timeSeconds: number, timeline: HTMLElement) {
+  const rect = timeline.getBoundingClientRect()
+  const dotsContainer = document.getElementById('timeline-dots') as HTMLElement
+  const dotsRect = dotsContainer.getBoundingClientRect()
+
+  // Calculate pixel position within timeline
+  const pxInTimeline = (timeSeconds / store.duration) * rect.width
+  // Offset by timeline's left relative to dots container
+  const pxInDots = pxInTimeline + (rect.left - dotsRect.left)
+
+  dot.style.left = `${pxInDots}px`
+}
+
+// ── CLICK ─────────────────────────────────
 let isDragging = false
 
 export function bindSecondClick() {
@@ -151,8 +164,7 @@ export function bindSecondClick() {
 export function bindPauseComment() {
   store.audio?.addEventListener('pause', () => {
     if (!store.audio || store.audio.ended) return
-    const t = store.audio.currentTime
-    showCommentPopup(t)
+    showCommentPopup(store.audio.currentTime)
   })
 }
 

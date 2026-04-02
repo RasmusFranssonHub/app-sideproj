@@ -1,27 +1,39 @@
+/* Desktop nav — pill buttons */
 .header-nav {
-    margin-top: 1em;
-    ul {
-        list-style: none;
-        padding: 0;
-        display: flex;
-        gap: 1.5em;
-        justify-content: center;
-        align-items: center;
-        li {
-            a {
-                text-decoration: none;
-                background-color: transparent;
-                border: 1px solid rgba(255, 255, 255, 0.87);
-                border-radius: 8px;
-                color: rgba(255, 255, 255, 0.87);
-                font-size: 1.2em;
-                padding: 0.4em 0.8em;
-                transition: background-color 0.25s, color 0.25s;
-                &:hover {
-                background-color: rgba(255, 255, 255, 0.87);
-                color: #242424;
-                }
-            }
-        }
+  margin-top: 1em;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 1.5em;
+    justify-content: center;
+    align-items: center;
+
+    li a {
+      text-decoration: none;
+      background-color: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.87);
+      border-radius: 8px;
+      color: rgba(255, 255, 255, 0.87);
+      font-size: 1.2em;
+      padding: 0.4em 0.8em;
+      transition: background-color 0.25s, color 0.25s;
+      display: inline-block;
     }
-} 
+
+    li a:hover {
+      background-color: rgba(255, 255, 255, 0.87);
+      color: #242424;
+    }
+  }
+}
+
+/* In the mobile drawer, reset all desktop pill styles */
+.header-nav.open li a,
+.header-nav li a.nav-drawer-link {
+  border: none;
+  border-radius: 0;
+  font-size: 1em;
+  padding: 0;
+}

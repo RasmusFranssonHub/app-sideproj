@@ -1,5 +1,8 @@
+// Apply saved theme on every page load
+const _t = localStorage.getItem('soundrev_theme')
+if (_t) document.documentElement.setAttribute('data-theme', _t)
+
 import './styles/main.scss'
-import './mobile/mobile.scss'
 
 import { bindUpload } from './tracks/upload'
 import { bindPlayerControls } from './ui/events'
@@ -20,3 +23,4 @@ updateNav()
 initMobile()
 
 document.addEventListener('soundrev:commentschanged', () => renderCommentDots())
+document.addEventListener('soundrev:renderdots', () => renderCommentDots())

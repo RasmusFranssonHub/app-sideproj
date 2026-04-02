@@ -24,56 +24,107 @@
 
       <main class="uploads-main">
 
-        <div id="uploads-header" class="uploads-header">
-          <h2 class="uploads-title">Uploads</h2>
-          <a href="/app-sideproj/" class="btn-new-upload">+ New upload</a>
+        <div class="uploads-header" id="uploads-header">
+          <h2 class="uploads-title">Your projects</h2>
+          <a href="/app-sideproj/" class="uploads-new-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            New track
+          </a>
         </div>
 
         <div id="uploads-empty" class="uploads-empty hidden">
-          <p>No saved projects yet. <a href="/app-sideproj/">Upload your first track →</a></p>
+          <p>No projects yet.</p>
+          <a href="/app-sideproj/" class="uploads-new-btn">Upload your first track →</a>
         </div>
 
-        <!-- LIST VIEW -->
         <ul id="uploads-list" class="uploads-list"></ul>
 
-        <!-- PROJECT VIEW — shown when a project is opened -->
+        <!-- Project detail view -->
         <div id="project-view" class="project-view hidden">
-          <button id="project-view-back" class="project-view-back">← Back</button>
+          <button id="project-view-back" class="project-view-back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>
+            Back
+          </button>
 
           <div class="project-view-card">
             <div class="project-view-header">
-              <h2 id="project-view-name" class="project-view-name"></h2>
-              <span id="project-view-file" class="project-view-file"></span>
+              <div class="project-view-info">
+                <h2 id="project-view-name" class="project-view-name"></h2>
+                <div class="project-view-meta">
+                  <span id="project-view-file" class="pv-meta-item"></span>
+                  <span class="pv-dot">·</span>
+                  <span id="project-view-duration" class="pv-meta-item"></span>
+                  <span class="pv-dot">·</span>
+                  <span id="project-view-count" class="pv-meta-item"></span>
+                  <span class="pv-dot">·</span>
+                  <span id="project-view-date" class="pv-meta-item"></span>
+                </div>
+              </div>
             </div>
 
-            <!-- Mini waveform placeholder with comment markers -->
-            <div class="project-view-waveform">
-              <canvas id="project-view-canvas" height="60"></canvas>
-              <div id="project-view-markers" class="project-view-markers"></div>
+            <!-- Mini player -->
+            <div class="pv-player" id="pv-player">
+              <div class="pv-player-reupload hidden" id="pv-reupload">
+                <label class="pv-reupload-label">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Upload audio to play
+                  <input type="file" id="pv-file-input" accept="audio/*" style="display:none" />
+                </label>
+              </div>
+              <div class="pv-transport" id="pv-transport">
+                <button id="pv-rewind" class="pv-btn" aria-label="Rewind">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="4" x2="5" y2="20"/></svg>
+                </button>
+                <button id="pv-play" class="pv-btn pv-btn-play" aria-label="Play">
+                  <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                </button>
+                <button id="pv-forward" class="pv-btn" aria-label="Forward">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="4" x2="19" y2="20"/></svg>
+                </button>
+                <div class="pv-progress-wrap">
+                  <span id="pv-current" class="pv-time">0:00</span>
+                  <div class="pv-progress-bar" id="pv-progress-bar">
+                    <div class="pv-progress-fill" id="pv-progress-fill"></div>
+                  </div>
+                  <span id="pv-duration" class="pv-time">0:00</span>
+                </div>
+              </div>
             </div>
 
-            <div class="project-view-meta">
-              <span id="project-view-duration"></span>
-              <span id="project-view-date"></span>
-              <span id="project-view-count"></span>
+            <!-- Comments list -->
+            <div class="pv-comments" id="pv-comments-wrap">
+              <div class="pv-comments-header">
+                <span class="pv-comments-label">Comments</span>
+              </div>
+              <ul id="project-view-comments" class="pv-comments-list"></ul>
             </div>
+          </div>
 
-            <!-- Comments read-only list -->
-            <ul id="project-view-comments" class="project-view-comments"></ul>
-
-            <!-- Actions -->
-            <div class="project-view-actions">
-              <button id="project-view-open" class="upload-btn-open">Open & edit</button>
-              <button id="project-view-export" class="upload-btn-export">Export JSON</button>
-            </div>
+          <!-- Actions -->
+          <div class="pv-actions">
+            <button id="project-view-open" class="pv-action-btn pv-action-primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Open in player
+            </button>
+            <button id="project-view-workspace" class="pv-action-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              Open in workspace
+            </button>
+            <button id="project-view-share" class="pv-action-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              Share / Download
+            </button>
+            <button id="project-view-delete" class="pv-action-btn pv-action-danger">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+              Delete project
+            </button>
           </div>
         </div>
 
       </main>
-
-      <footer>
-        <p>&copy; 2024 SoundRev. All rights reserved.</p>
-      </footer>
     </div>
     <script type="module" src="/src/uploads-page.ts"></script>
   </body>

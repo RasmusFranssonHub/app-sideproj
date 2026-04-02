@@ -9,6 +9,7 @@ export default defineConfig({
         uploads: 'uploads.html',
         workspace: 'workspace.html',
         login: 'login.html',
+        settings: 'settings.html',
       },
     },
   },

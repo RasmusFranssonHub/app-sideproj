@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SoundRev — Settings</title>
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <div class="nav-bar-head">
+          <a href="/app-sideproj/" class="nav-logo"><h1>SoundRev.</h1></a>
+          <nav class="header-nav">
+            <ul>
+              <li><a href="/app-sideproj/">+ New track</a></li>
+              <li><a href="/app-sideproj/uploads.html">Uploads</a></li>
+              <li><a href="/app-sideproj/workspace.html">Workspace</a></li>
+              <li><a href="/app-sideproj/login.html">Login</a></li>
+              <li><a href="/app-sideproj/settings.html" class="nav-active">Settings</a></li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+
+      <main class="settings-main">
+        <div class="settings-card">
+          <h2 class="settings-title">Settings</h2>
+
+          <div class="settings-section">
+            <div class="settings-section-label">Appearance</div>
+
+            <div class="settings-row">
+              <div class="settings-row-info">
+                <span class="settings-row-title">Theme</span>
+                <span class="settings-row-desc">Choose light or dark mode</span>
+              </div>
+              <div class="theme-toggle" id="theme-toggle">
+                <button class="theme-btn" id="theme-light" aria-label="Light mode">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"/>
+                    <line x1="12" y1="1" x2="12" y2="3"/>
+                    <line x1="12" y1="21" x2="12" y2="23"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="1" y1="12" x2="3" y2="12"/>
+                    <line x1="21" y1="12" x2="23" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                  </svg>
+                  Light
+                </button>
+                <button class="theme-btn" id="theme-dark" aria-label="Dark mode">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  </svg>
+                  Dark
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/src/settings-page.ts"></script>
+  </body>
+</html>

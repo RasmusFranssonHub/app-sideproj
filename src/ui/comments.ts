@@ -1,6 +1,6 @@
 import { store } from '../state/store'
 import { seekToSecond } from '../audio/player'
-import { saveCurrentProject } from '../tracks/projects'
+import { saveCurrentProject, exportProjectJson } from '../tracks/projects'
 
 const PASTEL_COLORS = [
   '#ffb3b3','#ffcc99','#ffeb99','#b3ffb3',
@@ -243,9 +243,19 @@ export function bindCommentPopup() {
     closePopup('save-popup')
     if (!user) { window.location.href = '/app-sideproj/login.html'; return }
     try {
-      await saveCurrentProject(name)
+      const project = await saveCurrentProject(name)
+      // Always upload audio to Supabase Storage
+      const { uploadAudio } = await import('../tracks/projects')
+      const { getCurrentFile } = await import('../tracks/upload')
+      const file = getCurrentFile()
+      if (file && project.id) {
+        try { await uploadAudio(project.id, file) } catch(e) { console.warn('audio upload failed', e) }
+      }
       showFeedback('action-save', 'Saved ✓')
-    } catch { showFeedback('action-save', 'Error') }
+    } catch (e) {
+      console.warn(e)
+      showFeedback('action-save', 'Error saving')
+    }
   })
 
   document.getElementById('save-popup-share')?.addEventListener('click', async () => {

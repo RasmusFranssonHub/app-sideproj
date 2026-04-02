@@ -148,19 +148,27 @@ footer { display: none !important; }
   width: 100%; /* always matches wrapper, not zoomed timeline */
 }
 
-/* ── Comment dots ── */
+/* ── Comment dots ──
+   .comment-dot is a 24x24 positioned element.
+   Its left% is set by JS relative to the dots container.
+   All children are positioned absolute within it.
+── */
 .comment-dot {
   position: absolute;
-  top: 0;
-  width: 0; height: 0;
-  overflow: visible;
+  top: 2px;
+  width: 24px;
+  height: 24px;
+  /* Center on anchor point */
+  transform: translateX(-50%);
   pointer-events: none;
   z-index: 20;
+  overflow: visible;
 }
+
 .comment-dot-bubble {
   opacity: 0;
   position: absolute;
-  bottom: 36px;
+  bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(0,0,0,0.88);
@@ -173,6 +181,7 @@ footer { display: none !important; }
   transition: opacity 0.15s;
 }
 .comment-dot:hover .comment-dot-bubble { opacity: 1; }
+
 .comment-dot-time {
   font-family: 'SF Mono', 'Fira Code', monospace;
   font-size: 0.65em;
@@ -180,10 +189,11 @@ footer { display: none !important; }
   color: #fff;
   letter-spacing: 0.04em;
 }
+
 .comment-dot-arrow {
   opacity: 0;
   position: absolute;
-  bottom: 30px;
+  bottom: 26px;
   left: 50%;
   transform: translateX(-50%);
   width: 0; height: 0;
@@ -193,9 +203,10 @@ footer { display: none !important; }
   z-index: 29;
 }
 .comment-dot:hover .comment-dot-arrow { opacity: 1; }
+
 .comment-dot-circle {
   position: absolute;
-  top: 0; left: -12px;
+  top: 0; left: 0;
   width: 24px; height: 24px;
   border-radius: 50%;
   background: var(--dot-color);
@@ -214,7 +225,6 @@ footer { display: none !important; }
   user-select: none;
   pointer-events: all;
   transition: none;
-  transform: none !important;
   box-sizing: border-box;
 }
 .comment-dot-circle:active { cursor: grabbing; }
