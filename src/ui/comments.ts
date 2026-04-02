@@ -1,6 +1,6 @@
 import { store } from '../state/store'
 import { seekToSecond } from '../audio/player'
-import { saveCurrentProject, exportProjectJson } from '../tracks/projects'
+import { saveCurrentProject } from '../tracks/projects'
 
 const PASTEL_COLORS = [
   '#ffb3b3','#ffcc99','#ffeb99','#b3ffb3',
