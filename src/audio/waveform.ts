@@ -1,6 +1,13 @@
 export let waveformPeaks: number[] = []
 
 export async function drawWaveform(file: File, canvas: HTMLCanvasElement) {
+  // Match canvas resolution to its actual CSS size (important on mobile)
+  const cssWidth = canvas.clientWidth || canvas.width
+  const cssHeight = canvas.clientHeight || canvas.height
+  if (cssWidth > 0) {
+    canvas.width = cssWidth * window.devicePixelRatio
+    canvas.height = cssHeight * window.devicePixelRatio
+  }
   const arrayBuffer = await file.arrayBuffer()
   const audioContext = new AudioContext()
   const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
@@ -30,6 +37,10 @@ export function renderWaveform(canvas: HTMLCanvasElement, progress: number) {
 
   const width = canvas.width
   const height = canvas.height
+
+  // On mobile, the canvas does NOT include the left padding offset.
+  // Played = everything that has passed under the center line = progress * width.
+  // The padding-left on #timeline handles the visual offset.
   const playedX = Math.floor(progress * width)
 
   ctx.clearRect(0, 0, width, height)
@@ -39,13 +50,9 @@ export function renderWaveform(canvas: HTMLCanvasElement, progress: number) {
     const barHeight = Math.max(2, peak * height * 0.88)
     const y = (height - barHeight) / 2
 
-    if (px < playedX) {
-      // Played — bright white
-      ctx.fillStyle = 'rgba(255,255,255,0.90)'
-    } else {
-      // Unplayed — muted
-      ctx.fillStyle = 'rgba(255,255,255,0.18)'
-    }
+    ctx.fillStyle = px < playedX
+      ? 'rgba(255,255,255,0.90)'
+      : 'rgba(255,255,255,0.18)'
     ctx.fillRect(px, y, 1, barHeight)
   }
 }

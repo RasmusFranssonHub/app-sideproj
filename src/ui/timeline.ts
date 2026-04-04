@@ -24,6 +24,17 @@ function tick() {
     renderWaveform(canvas, progress)
     if (handle) handle.style.left = `${progress * 100}%`
 
+    // Mobile: scroll so current time stays at center line
+    if (window.innerWidth <= 768) {
+      const wrapper = document.querySelector('.timeline-wrapper') as HTMLElement
+      const canvas = document.getElementById('waveform') as HTMLCanvasElement
+      if (wrapper && canvas) {
+        // canvas = waveform content (no padding)
+        // scrollLeft 0 = time 0 at center (because padding-left = wrapperWidth/2)
+        wrapper.scrollLeft = progress * canvas.offsetWidth
+      }
+    }
+
     const ct = document.getElementById('current-time')
     const dur = document.getElementById('duration')
     if (ct) ct.textContent = formatTime(store.currentTime)
@@ -145,6 +156,9 @@ function updateDotPosition(dot: HTMLElement, timeSeconds: number, timeline: HTML
 let isDragging = false
 
 export function bindSecondClick() {
+  // Desktop only — mobile uses drag scrub instead
+  if (window.innerWidth <= 768) return
+
   const canvas = document.getElementById('waveform') as HTMLCanvasElement
   if (!canvas) return
 
@@ -194,3 +208,49 @@ export function bindPlayheadDrag() {
 }
 
 export function bindSecondDrag() {}
+
+// Mobile: drag waveform left/right to scrub.
+// The center line is the playhead — waveform moves under it.
+// No tap-to-seek. Desktop untouched.
+export function bindMobileWaveformScrub() {
+  if (window.innerWidth > 768) return
+
+  const wrapper = document.querySelector('.timeline-wrapper') as HTMLElement
+  const timeline = document.getElementById('timeline') as HTMLElement
+  if (!wrapper || !timeline) return
+
+  let dragging = false
+  let lastX = 0
+  let dragStartX = 0
+  let dragStartTime = 0
+  let moved = false
+
+  const getCanvas = () => document.getElementById('waveform') as HTMLCanvasElement
+
+  timeline.addEventListener('touchstart', (e) => {
+    if (!store.duration) return
+    dragging = true
+    moved = false
+    lastX = e.touches[0].clientX
+    dragStartX = e.touches[0].clientX
+    dragStartTime = store.currentTime
+  }, { passive: true })
+
+  window.addEventListener('touchmove', (e) => {
+    if (!dragging || !store.duration) return
+    const dx = e.touches[0].clientX - lastX
+    lastX = e.touches[0].clientX
+    moved = true
+
+    const canvas = getCanvas()
+    const canvasWidth = canvas ? canvas.offsetWidth : wrapper.clientWidth * 2.2
+    // drag left = forward, drag right = backward
+    const dtSeconds = -(dx / canvasWidth) * store.duration
+    const newTime = Math.max(0, Math.min(store.currentTime + dtSeconds, store.duration))
+    seekToSecond(newTime)
+  }, { passive: true })
+
+  window.addEventListener('touchend', () => {
+    dragging = false
+  })
+}

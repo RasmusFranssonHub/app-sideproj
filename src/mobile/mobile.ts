@@ -5,6 +5,19 @@ export function initMobile() {
   injectMobileActionBar()
 }
 
+// Call after waveform loads to set padding so time=0 is at center line
+export function initMobileTimeline() {
+  if (window.innerWidth > 768) return
+  const wrapper = document.querySelector('.timeline-wrapper') as HTMLElement
+  const timeline = document.getElementById('timeline') as HTMLElement
+  if (!wrapper || !timeline) return
+
+  const half = wrapper.clientWidth / 2
+  timeline.style.paddingLeft = `${half}px`
+  // scrollLeft 0 now = time 0 at center
+  wrapper.scrollLeft = 0
+}
+
 function initHamburger() {
   const nav = document.querySelector('.header-nav') as HTMLElement
   const head = document.querySelector('.nav-bar-head') as HTMLElement

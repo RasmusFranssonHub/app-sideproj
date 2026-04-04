@@ -27,6 +27,20 @@ export function bindUpload() {
     const file = input.files?.[0]
     if (!file) return
 
+    // Validate audio file
+    const validTypes = [
+      'audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/wave', 'audio/x-wav',
+      'audio/aac', 'audio/mp4', 'audio/x-m4a', 'audio/ogg', 'audio/opus',
+      'audio/flac', 'audio/x-flac', 'audio/aiff', 'audio/x-aiff',
+      'audio/x-ms-wma', 'audio/webm'
+    ]
+    const validExts = /\.(mp3|wav|aac|m4a|ogg|opus|flac|aiff|aif|wma)$/i
+    if (!validTypes.includes(file.type) && !validExts.test(file.name)) {
+      alert('Please upload an audio file (mp3, wav, aac, m4a, flac, ogg, etc.)')
+      input.value = ''
+      return
+    }
+
     _currentFile = file
     const url = URL.createObjectURL(file)
     const baseName = file.name.replace(/\.[^/.]+$/, '')
@@ -38,6 +52,7 @@ export function bindUpload() {
 
     loadTrack(url)
     await drawWaveform(file, canvas)
+    document.dispatchEvent(new CustomEvent('soundrev:trackloaded'))
 
     uploadSection?.classList.add('hidden')
     showPlayer(baseName)

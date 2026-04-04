@@ -6,7 +6,7 @@ import './styles/main.scss'
 
 import { bindUpload } from './tracks/upload'
 import { bindPlayerControls } from './ui/events'
-import { bindSecondClick, bindSecondDrag, bindPlayheadDrag } from './ui/timeline'
+import { bindSecondClick, bindSecondDrag, bindPlayheadDrag, bindMobileWaveformScrub } from './ui/timeline'
 import { bindCommentPopup, renderCommentsList } from './ui/comments'
 import { renderCommentDots } from './ui/timeline'
 import { updateNav } from './lib/auth-guard'
@@ -21,6 +21,7 @@ bindCommentPopup()
 renderCommentsList()
 updateNav()
 initMobile()
+bindMobileWaveformScrub()
 
 document.addEventListener('soundrev:commentschanged', () => renderCommentDots())
 document.addEventListener('soundrev:renderdots', () => renderCommentDots())

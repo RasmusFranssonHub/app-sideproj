@@ -100,6 +100,7 @@ footer { display: none !important; }
   overflow: hidden;
   background: #0a0a0a;
   user-select: none;
+  flex-shrink: 0;
 }
 #waveform {
   position: absolute;
@@ -780,4 +781,17 @@ footer { display: none !important; }
   font-size: 0.78em;
   padding: 8px 14px;
   text-align: center;
+}
+
+.reupload-label {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255,200,50,0.09);
+  border: 1px solid rgba(255,200,50,0.2);
+  border-radius: 7px;
+  color: rgba(255,200,50,0.85);
+  font-size: 0.78em;
+  padding: 4px 12px;
+  cursor: pointer;
+  white-space: nowrap;
 }
