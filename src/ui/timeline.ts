@@ -29,8 +29,6 @@ function tick() {
       const wrapper = document.querySelector('.timeline-wrapper') as HTMLElement
       const canvas = document.getElementById('waveform') as HTMLCanvasElement
       if (wrapper && canvas) {
-        // canvas = waveform content (no padding)
-        // scrollLeft 0 = time 0 at center (because padding-left = wrapperWidth/2)
         wrapper.scrollLeft = progress * canvas.offsetWidth
       }
     }
@@ -221,27 +219,19 @@ export function bindMobileWaveformScrub() {
 
   let dragging = false
   let lastX = 0
-  let dragStartX = 0
-  let dragStartTime = 0
-  let moved = false
 
   const getCanvas = () => document.getElementById('waveform') as HTMLCanvasElement
 
   timeline.addEventListener('touchstart', (e) => {
     if (!store.duration) return
     dragging = true
-    moved = false
     lastX = e.touches[0].clientX
-    dragStartX = e.touches[0].clientX
-    dragStartTime = store.currentTime
   }, { passive: true })
 
   window.addEventListener('touchmove', (e) => {
     if (!dragging || !store.duration) return
     const dx = e.touches[0].clientX - lastX
     lastX = e.touches[0].clientX
-    moved = true
-
     const canvas = getCanvas()
     const canvasWidth = canvas ? canvas.offsetWidth : wrapper.clientWidth * 2.2
     // drag left = forward, drag right = backward
