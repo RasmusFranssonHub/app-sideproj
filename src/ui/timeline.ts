@@ -24,12 +24,29 @@ function tick() {
     renderWaveform(canvas, progress)
     if (handle) handle.style.left = `${progress * 100}%`
 
-    // Mobile: scroll so current time stays at center line
+    // Mobile scrolling — smooth via lerp
     if (window.innerWidth <= 768) {
       const wrapper = document.querySelector('.timeline-wrapper') as HTMLElement
-      const canvas = document.getElementById('waveform') as HTMLCanvasElement
-      if (wrapper && canvas) {
-        wrapper.scrollLeft = progress * canvas.offsetWidth
+      const wfCanvas = document.getElementById('waveform') as HTMLCanvasElement
+      if (wrapper && wfCanvas) {
+        const isZoomedOut = wrapper.classList.contains('zoomed-out')
+
+        if (isZoomedOut) {
+          // Zoomed out: no scroll, wave fills full wrapper
+          wrapper.scrollLeft = 0
+        } else {
+          const canvasW = wfCanvas.offsetWidth
+          const wrapW = wrapper.clientWidth
+          // Content is center 50% of canvas (25% padding each side)
+          const targetX = (0.25 + progress * 0.5) * canvasW
+          const targetScroll = Math.max(0, Math.min(targetX - wrapW / 2, canvasW - wrapW))
+          // Smooth lerp — only during playback
+          if (store.audio && !store.audio.paused) {
+            wrapper.scrollLeft += (targetScroll - wrapper.scrollLeft) * 0.12
+          } else {
+            wrapper.scrollLeft = targetScroll
+          }
+        }
       }
     }
 
@@ -137,16 +154,30 @@ export function renderCommentDots() {
 
 // Position dot using timeline's actual pixel width
 // so dots always align with the waveform regardless of zoom/scroll
-function updateDotPosition(dot: HTMLElement, timeSeconds: number, timeline: HTMLElement) {
-  const rect = timeline.getBoundingClientRect()
+function updateDotPosition(dot: HTMLElement, timeSeconds: number, _timeline: HTMLElement) {
+  const canvas = document.getElementById('waveform') as HTMLCanvasElement
   const dotsContainer = document.getElementById('timeline-dots') as HTMLElement
+  if (!dotsContainer || !canvas || !store.duration) return
+
+  const isMobile = window.innerWidth <= 768
+  const wrapper = isMobile ? document.querySelector('.timeline-wrapper') as HTMLElement : null
+  const isZoomedOut = wrapper?.classList.contains('zoomed-out') ?? false
+
+  const canvasRect = canvas.getBoundingClientRect()
   const dotsRect = dotsContainer.getBoundingClientRect()
 
-  // Calculate pixel position within timeline
-  const pxInTimeline = (timeSeconds / store.duration) * rect.width
-  // Offset by timeline's left relative to dots container
-  const pxInDots = pxInTimeline + (rect.left - dotsRect.left)
+  let pxInCanvas: number
+  if (isMobile && !isZoomedOut) {
+    // Content is center 50% of canvas — offset by 25%
+    const contentStart = canvasRect.width * 0.25
+    const contentWidth = canvasRect.width * 0.5
+    pxInCanvas = contentStart + (timeSeconds / store.duration) * contentWidth
+  } else {
+    pxInCanvas = (timeSeconds / store.duration) * canvasRect.width
+  }
 
+  // Convert canvas px to dots container px
+  const pxInDots = pxInCanvas + (canvasRect.left - dotsRect.left)
   dot.style.left = `${pxInDots}px`
 }
 
@@ -232,8 +263,9 @@ export function bindMobileWaveformScrub() {
     if (!dragging || !store.duration) return
     const dx = e.touches[0].clientX - lastX
     lastX = e.touches[0].clientX
-    const canvas = getCanvas()
-    const canvasWidth = canvas ? canvas.offsetWidth : wrapper.clientWidth * 2.2
+    const dragCanvas = getCanvas()
+    // Use canvas width (waveform only, no padding) for accurate time mapping
+    const canvasWidth = dragCanvas ? dragCanvas.offsetWidth : wrapper.clientWidth * 2
     // drag left = forward, drag right = backward
     const dtSeconds = -(dx / canvasWidth) * store.duration
     const newTime = Math.max(0, Math.min(store.currentTime + dtSeconds, store.duration))

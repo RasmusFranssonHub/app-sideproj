@@ -76,20 +76,7 @@
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="4" x2="19" y2="20"/></svg>
                 </button>
               </div>
-
-              <div class="playback-speed-control">
-                <label for="playback-speed">Speed:</label>
-                <select id="playback-speed">
-                  <option value="0.5">0.5x</option>
-                  <option value="0.75">0.75x</option>
-                  <option value="1" selected>1x</option>
-                  <option value="1.25">1.25x</option>
-                  <option value="1.5">1.5x</option>
-                  <option value="2">2x</option>
-                </select>
-              </div>
-
-              <!-- Comment creator -->
+<!-- Comment creator -->
               <div class="comment-section">
                 <button class="comment-trigger-btn" id="comment-btn" aria-label="Add comment">
                   Comment
@@ -97,29 +84,7 @@
                     <polyline points="6 9 12 15 18 9"/>
                   </svg>
                 </button>
-                <div class="comment-popup" id="comment-popup">
-                  <div class="comment-popup-header">
-                    <span>Add comment</span>
-                    <input class="comment-timestamp-input" id="comment-timestamp" type="text" value="0:00" />
-                  </div>
-                  <textarea id="comment-text" placeholder="Write your comment..."></textarea>
-                  <div class="comment-popup-footer">
-                    <div class="comment-options">
-                      <label for="comment-type">Type:</label>
-                      <select id="comment-type">
-                        <option value="general">General</option>
-                        <option value="mix">Mix</option>
-                        <option value="timing">Timing</option>
-                        <option value="arrangement">Arrangement</option>
-                      </select>
-                      <div class="color-picker-row" id="color-picker-row"></div>
-                    </div>
-                    <div class="comment-popup-actions">
-                      <button id="comment-cancel" class="btn-cancel">Cancel</button>
-                      <button id="save-comment" class="btn-save">Save</button>
-                    </div>
-                  </div>
-                </div>
+        
               </div>
 
             </div>
@@ -240,5 +205,32 @@
 
     </div>
     <script type="module" src="/src/main.ts"></script>
+  <!--COMMENT POPUP - fullscreen sheet on mobile -->
+  <div id="comment-popup" class="comment-popup hidden">
+    <div class="comment-popup-backdrop" onclick="document.getElementById('comment-cancel')?.click()"></div>
+    <div class="comment-popup-inner">
+      <div class="comment-popup-header">
+        <span>Add comment</span>
+        <input class="comment-timestamp-input" id="comment-timestamp" type="text" value="0:00" />
+      </div>
+      <textarea id="comment-text" placeholder="Write your comment..."></textarea>
+      <div class="comment-popup-footer">
+        <div class="comment-options">
+          <label for="comment-type">Type:</label>
+          <select id="comment-type">
+            <option value="general">General</option>
+            <option value="mix">Mix</option>
+            <option value="timing">Timing</option>
+            <option value="arrangement">Arrangement</option>
+          </select>
+          <div class="color-picker-row" id="color-swatches"></div>
+        </div>
+        <div class="comment-popup-actions">
+          <button class="btn-cancel" id="comment-cancel">Cancel</button>
+          <button class="btn-save" id="save-comment">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
   </body>
 </html>

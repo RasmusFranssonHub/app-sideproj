@@ -9,6 +9,18 @@ import { loadProjectWithComments, getAudioUrl, type SavedProject } from '../trac
 let _currentFile: File | null = null
 export function getCurrentFile(): File | null { return _currentFile }
 
+// Listen for zoom change to redraw waveform at new size
+export function bindZoomRedraw() {
+  document.addEventListener('soundrev:redrawwaveform', async () => {
+    const file = getCurrentFile()
+    const canvas = document.getElementById('waveform') as HTMLCanvasElement
+    if (file && canvas) {
+      const { drawWaveform } = await import('../audio/waveform')
+      await drawWaveform(file, canvas)
+    }
+  })
+}
+
 export function bindUpload() {
   const input = document.getElementById('upload') as HTMLInputElement
   const canvas = document.getElementById('waveform') as HTMLCanvasElement
@@ -102,6 +114,7 @@ async function loadProjectIntoPlayer(project: SavedProject, canvas: HTMLCanvasEl
       const file = new File([blob], project.file_name)
       _currentFile = file
       await drawWaveform(file, canvas)
+      document.dispatchEvent(new CustomEvent('soundrev:trackloaded'))
       return
     } catch (e) {
       console.warn('Could not load audio from storage', e)

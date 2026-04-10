@@ -135,16 +135,28 @@ export function showCommentPopup(timeSeconds: number = store.currentTime) {
   const popup = document.getElementById('comment-popup')
   const btn = document.getElementById('comment-btn')
   const ts = document.getElementById('comment-timestamp') as HTMLInputElement
-  if (!popup || !btn) return
+  if (!popup) return
 
+  // Remove hidden, add visible — works for both desktop fold and mobile sheet
+  popup.classList.remove('hidden')
   popup.classList.add('visible')
-  btn.classList.add('is-open')
+  if (btn) btn.classList.add('is-open')
   if (ts) ts.value = formatTime(Math.floor(timeSeconds))
+
+  // Update mobile header timestamp
+  const mobileHeader = popup.querySelector('.comment-popup-header span')
+  if (mobileHeader && window.innerWidth <= 768) {
+    const m = Math.floor(timeSeconds / 60)
+    const s = Math.floor(timeSeconds % 60)
+    mobileHeader.textContent = `Comment at ${m}:${s.toString().padStart(2, '0')}`
+  }
 }
 
 export function hideCommentPopup() {
-  document.getElementById('comment-popup')?.classList.remove('visible')
-  document.getElementById('comment-btn')?.classList.remove('is-open')
+  const popup = document.getElementById('comment-popup')
+  if (!popup) return
+  popup.classList.add('hidden')
+  popup.classList.remove('visible')
 }
 
 /* ── Bind all popup & button logic ── */
